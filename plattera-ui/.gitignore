@@ -1,0 +1,128 @@
+# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
+
+# dependencies
+/node_modules
+/.pnp
+.pnp.*
+.yarn/*
+!.yarn/patches
+!.yarn/plugins
+!.yarn/releases
+!.yarn/versions
+package-lock.json
+yarn.lock
+pnpm-lock.yaml
+
+# testing
+/coverage
+/.nyc_output
+/cypress/videos
+/cypress/screenshots
+
+# next.js
+/.next/
+/out/
+.next/
+next-env.d.ts
+
+# production
+/build
+/dist
+/.turbo
+
+# misc
+.DS_Store
+*.pem
+Thumbs.db
+*.log
+*.swp
+*.swo
+*~
+
+# debug
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
+lerna-debug.log*
+
+# local env files
+.env
+.env*.local
+.env.development
+.env.test
+.env.production
+.env.development.local
+.env.test.local
+.env.production.local
+
+# vercel
+.vercel
+
+# typescript
+*.tsbuildinfo
+next-env.d.ts
+
+# IDE - VSCode
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+*.code-workspace
+.history/
+
+# IDE - JetBrains
+.idea/
+*.iml
+*.iws
+.idea_modules/
+
+# IDE - WebStorm
+.idea/
+*.iml
+*.iws
+.idea_modules/
+
+# IDE - Sublime Text
+*.sublime-workspace
+*.sublime-project
+
+# Cache and temp files
+.cache/
+.temp/
+.tmp/
+*.cache
+.eslintcache
+.stylelintcache
+
+# Storybook
+storybook-static/
+
+# PWA files
+**/public/sw.js
+**/public/workbox-*.js
+**/public/worker-*.js
+**/public/sw.js.map
+**/public/workbox-*.js.map
+**/public/worker-*.js.map
+
+# Optional: Uncomment if you use these tools
+# /storybook-static
+# /docs
+# /docs-html
+# /docs-md
+# /docs-pdf
+# /docs-json
+# /docs-yaml
+# /docs-xml
+# /docs-csv
+# /docs-tsv
+# /docs-html
+# /docs-md
+# /docs-pdf
+# /docs-json
+# /docs-yaml
+# /docs-xml
+# /docs-csv
+# /docs-tsv

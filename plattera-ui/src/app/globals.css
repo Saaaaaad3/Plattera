@@ -1,7 +1,6 @@
 @import "tailwindcss";
 
 body {
-  background-color: rgb(70, 70, 70);
   color: rgb(var(--forground-rgb));
   padding: 1 rem;
 }

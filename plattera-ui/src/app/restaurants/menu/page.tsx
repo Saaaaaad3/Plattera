@@ -61,10 +61,11 @@ const MenuItemCard = memo(({ item }: { item: MenuItem }) => {
 
   return (
     <li
-      className={`flex justify-between items-start gap-2 sm:gap-3 md:gap-4 p-3 sm:p-4 border rounded-lg shadow-sm hover:shadow-md transition-shadow ${
+      className={`flex justify-between items-center gap-2 sm:gap-3 md:gap-4 p-3 sm:p-4 border rounded-2xl shadow-sm hover:shadow-md transition-shadow ${
         !isAvailable ? "opacity-60" : ""
       }`}
     >
+      <MenuItemImage name={item.itemName} imageUrl={item.itemImage} />
       <div className="flex-1 min-w-0">
         <div className="flex flex-wrap items-center gap-1 sm:gap-2">
           <span
@@ -108,7 +109,6 @@ const MenuItemCard = memo(({ item }: { item: MenuItem }) => {
           )}
         </div>
       </div>
-      <MenuItemImage name={item.itemName} imageUrl={item.itemImage} />
     </li>
   );
 });

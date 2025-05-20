@@ -4,3 +4,36 @@ body {
   color: rgb(var(--forground-rgb));
   padding: 1 rem;
 }
+
+.light {
+  --background: #ffffff;
+  --card: #f4f4f7;
+  --copy-primary: #1a1a1a;
+  --copy-secondary: #555555;
+  --accent-primary: #ffb703;
+  --price-text: #ff8243;
+  --inactive-tab: #999999;
+  --card-shadow: #e0e0e0;
+}
+
+.dark {
+  --background: #2e2d4d;
+  --card: #3b3a60;
+  --copy-primary: #ffffff;
+  --copy-secondary: #b0b0b0;
+  --accent-primary: #ffb703;
+  --price-text: #ff8243;
+  --inactive-tab: #ffffff;
+  --card-shadow: #e0e0e0;
+}
+
+.red {
+  --background: #ffebee;
+  --card: #ffcdd2;
+  --copy-primary: #b71c1c;
+  --copy-secondary: #c62828;
+  --accent-primary: #ffb703;
+  --price-text: #ff8243;
+  --inactive-tab: #ef9a9a;
+  --card-shadow: #e0e0e0;
+}

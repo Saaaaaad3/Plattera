@@ -1,5 +1,6 @@
 import React, { memo, Suspense } from "react";
 import Image from "next/image";
+import { ThemeToggleWrapper } from "@/app/components/ThemeToggleWrapper";
 
 // Move to types/menu.ts in a real application
 interface MenuItem {
@@ -21,16 +22,37 @@ interface MenuItem {
 
 // Loading skeleton for menu items
 const MenuItemSkeleton = () => (
-  <li className="flex justify-between items-start gap-2 sm:gap-3 md:gap-4 p-3 sm:p-4 border rounded-lg animate-pulse">
+  <li
+    className="flex justify-between items-start gap-4 sm:gap-5 md:gap-6 p-3 sm:p-4 border rounded-lg animate-pulse"
+    style={{
+      backgroundColor: "var(--card)",
+      borderColor: "var(--card-shadow)",
+    }}
+  >
     <div className="flex-1 min-w-0 space-y-2 sm:space-y-3">
-      <div className="h-5 sm:h-6 bg-gray-200 rounded w-3/4"></div>
+      <div
+        className="h-5 sm:h-6 rounded w-3/4"
+        style={{ backgroundColor: "var(--copy-secondary)" }}
+      ></div>
       <div className="space-y-1 sm:space-y-2">
-        <div className="h-3 sm:h-4 bg-gray-200 rounded"></div>
-        <div className="h-3 sm:h-4 bg-gray-200 rounded w-5/6"></div>
+        <div
+          className="h-3 sm:h-4 rounded"
+          style={{ backgroundColor: "var(--copy-secondary)" }}
+        ></div>
+        <div
+          className="h-3 sm:h-4 rounded w-5/6"
+          style={{ backgroundColor: "var(--copy-secondary)" }}
+        ></div>
       </div>
-      <div className="h-4 sm:h-5 bg-gray-200 rounded w-1/4"></div>
+      <div
+        className="h-4 sm:h-5 rounded w-1/4"
+        style={{ backgroundColor: "var(--copy-secondary)" }}
+      ></div>
     </div>
-    <div className="flex-shrink-0 w-[80px] h-[80px] sm:w-[100px] sm:h-[100px] md:w-[120px] md:h-[120px] bg-gray-200 rounded-lg"></div>
+    <div
+      className="flex-shrink-0 w-[100px] h-[100px] sm:w-[120px] sm:h-[120px] md:w-[140px] md:h-[140px] rounded-lg"
+      style={{ backgroundColor: "var(--copy-secondary)" }}
+    ></div>
   </li>
 );
 
@@ -38,12 +60,12 @@ const MenuItemSkeleton = () => (
 const MenuItemImage = memo(
   ({ name, imageUrl }: { name: string; imageUrl?: string }) => {
     return (
-      <div className="flex-shrink-0 w-[80px] h-[80px] sm:w-[100px] sm:h-[100px] md:w-[120px] md:h-[120px] rounded-lg overflow-hidden relative bg-gray-100">
+      <div className="flex-shrink-0 w-[100px] h-[100px] sm:w-[120px] sm:h-[120px] md:w-[140px] md:h-[140px] rounded-lg overflow-hidden relative bg-gray-100">
         <Image
           src={imageUrl || "/DummyDishImage.jpg"}
           alt={name}
           fill
-          sizes="(max-width: 640px) 80px, (max-width: 768px) 100px, 120px"
+          sizes="(max-width: 640px) 100px, (max-width: 768px) 120px, 140px"
           className="object-cover"
           loading="lazy"
           priority={false}
@@ -61,15 +83,21 @@ const MenuItemCard = memo(({ item }: { item: MenuItem }) => {
 
   return (
     <li
-      className={`flex justify-between items-center gap-2 sm:gap-3 md:gap-4 p-3 sm:p-4 border rounded-2xl shadow-sm hover:shadow-md transition-shadow ${
+      className={`flex justify-between items-center gap-4 sm:gap-5 md:gap-6 p-3 sm:p-4 rounded-2xl shadow-md transition-shadow ${
         !isAvailable ? "opacity-60" : ""
       }`}
+      style={{
+        backgroundColor: "var(--card)",
+        color: "var(--copy-primary)",
+        borderColor: "var(--card-shadow)",
+      }}
     >
       <MenuItemImage name={item.itemName} imageUrl={item.itemImage} />
       <div className="flex-1 min-w-0">
         <div className="flex flex-wrap items-center gap-1 sm:gap-2">
           <span
             className="font-semibold text-base sm:text-lg block mb-0.5 sm:mb-1"
+            style={{ color: "var(--copy-primary)" }}
             title={item.itemName}
           >
             {item.itemName}
@@ -81,13 +109,17 @@ const MenuItemCard = memo(({ item }: { item: MenuItem }) => {
           )}
         </div>
         <p
-          className="text-gray-600 line-clamp-2 text-xs sm:text-sm mb-1 sm:mb-2"
+          className="line-clamp-2 text-xs sm:text-sm mb-1 sm:mb-2"
+          style={{ color: "var(--copy-secondary)" }}
           title={item.itemDescription}
         >
           {item.itemDescription}
         </p>
         <div className="flex flex-wrap items-center gap-1 sm:gap-2">
-          <span className="font-medium text-green-600 text-sm sm:text-base block">
+          <span
+            className="font-medium text-sm sm:text-base block"
+            style={{ color: "var(--price-text)" }}
+          >
             ${item.itemPrice}
           </span>
           {!isAvailable && (
@@ -117,7 +149,7 @@ MenuItemCard.displayName = "MenuItemCard";
 
 // Menu list component with loading state
 const MenuList = memo(({ items }: { items: MenuItem[] }) => (
-  <ul className="grid gap-2 sm:gap-3 md:gap-4">
+  <ul className="grid gap-4 sm:gap-5 md:gap-6 p-2 sm:p-5 md:p-6">
     {items.map((item) => (
       <Suspense key={item.itemId} fallback={<MenuItemSkeleton />}>
         <MenuItemCard item={item} />
@@ -300,9 +332,28 @@ const Menu = async () => {
   // const res = await fetch("http://localhost:3001/menu-items/0");
   // const menuItems: MenuItem = await res.json();
   return (
-    <div className="grid w-full min-h-screen p-2 sm:p-3 md:p-4">
-      <header className="w-full text-center mb-4 sm:mb-5 md:mb-6">
-        <h1 className="text-xl sm:text-2xl font-bold">Restaurant_name</h1>
+    <div
+      className="grid w-full min-h-screen p-2 sm:p-3 md:p-4"
+      style={{ backgroundColor: "var(--background)" }}
+    >
+      <header className="w-full mb-4 sm:mb-5 md:mb-6">
+        <div className="flex justify-between items-center relative px-4 sm:px-6 md:px-8">
+          {/* Left spacer to balance the toggle */}
+          <div className="w-8 sm:w-10 md:w-12" aria-hidden="true" />
+
+          {/* Centered title */}
+          <h1
+            className="text-sm sm:text-xl md:text-2xl font-bold absolute left-1/2 -translate-x-1/2 whitespace-nowrap"
+            style={{ color: "var(--copy-primary)" }}
+          >
+            Restaurant_name
+          </h1>
+
+          {/* Theme toggle */}
+          <div className="w-8 sm:w-10 md:w-12 flex justify-end">
+            <ThemeToggleWrapper />
+          </div>
+        </div>
       </header>
       <Suspense
         fallback={

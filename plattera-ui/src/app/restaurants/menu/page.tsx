@@ -23,7 +23,7 @@ interface MenuItem {
 // Loading skeleton for menu items
 const MenuItemSkeleton = () => (
   <li
-    className="flex justify-between items-start gap-2 sm:gap-3 md:gap-4 p-3 sm:p-4 border rounded-lg animate-pulse"
+    className="flex justify-between items-start gap-4 sm:gap-5 md:gap-6 p-3 sm:p-4 border rounded-lg animate-pulse"
     style={{
       backgroundColor: "var(--card)",
       borderColor: "var(--card-shadow)",
@@ -50,7 +50,7 @@ const MenuItemSkeleton = () => (
       ></div>
     </div>
     <div
-      className="flex-shrink-0 w-[80px] h-[80px] sm:w-[100px] sm:h-[100px] md:w-[120px] md:h-[120px] rounded-lg"
+      className="flex-shrink-0 w-[100px] h-[100px] sm:w-[120px] sm:h-[120px] md:w-[140px] md:h-[140px] rounded-lg"
       style={{ backgroundColor: "var(--copy-secondary)" }}
     ></div>
   </li>
@@ -60,12 +60,12 @@ const MenuItemSkeleton = () => (
 const MenuItemImage = memo(
   ({ name, imageUrl }: { name: string; imageUrl?: string }) => {
     return (
-      <div className="flex-shrink-0 w-[80px] h-[80px] sm:w-[100px] sm:h-[100px] md:w-[120px] md:h-[120px] rounded-lg overflow-hidden relative bg-gray-100">
+      <div className="flex-shrink-0 w-[100px] h-[100px] sm:w-[120px] sm:h-[120px] md:w-[140px] md:h-[140px] rounded-lg overflow-hidden relative bg-gray-100">
         <Image
           src={imageUrl || "/DummyDishImage.jpg"}
           alt={name}
           fill
-          sizes="(max-width: 640px) 80px, (max-width: 768px) 100px, 120px"
+          sizes="(max-width: 640px) 100px, (max-width: 768px) 120px, 140px"
           className="object-cover"
           loading="lazy"
           priority={false}
@@ -83,7 +83,7 @@ const MenuItemCard = memo(({ item }: { item: MenuItem }) => {
 
   return (
     <li
-      className={`flex justify-between items-center gap-2 sm:gap-3 md:gap-4 p-3 sm:p-4 rounded-2xl shadow-md transition-shadow ${
+      className={`flex justify-between items-center gap-4 sm:gap-5 md:gap-6 p-3 sm:p-4 rounded-2xl shadow-md transition-shadow ${
         !isAvailable ? "opacity-60" : ""
       }`}
       style={{
@@ -336,15 +336,23 @@ const Menu = async () => {
       className="grid w-full min-h-screen p-2 sm:p-3 md:p-4"
       style={{ backgroundColor: "var(--background)" }}
     >
-      <header className="w-full text-center mb-4 sm:mb-5 md:mb-6">
-        <div className="flex justify-between items-center mb-4">
+      <header className="w-full mb-4 sm:mb-5 md:mb-6">
+        <div className="flex justify-between items-center relative px-4 sm:px-6 md:px-8">
+          {/* Left spacer to balance the toggle */}
+          <div className="w-8 sm:w-10 md:w-12" aria-hidden="true" />
+
+          {/* Centered title */}
           <h1
-            className="text-xl sm:text-2xl font-bold"
+            className="text-sm sm:text-xl md:text-2xl font-bold absolute left-1/2 -translate-x-1/2 whitespace-nowrap"
             style={{ color: "var(--copy-primary)" }}
           >
             Restaurant_name
           </h1>
-          <ThemeToggleWrapper />
+
+          {/* Theme toggle */}
+          <div className="w-8 sm:w-10 md:w-12 flex justify-end">
+            <ThemeToggleWrapper />
+          </div>
         </div>
       </header>
       <Suspense

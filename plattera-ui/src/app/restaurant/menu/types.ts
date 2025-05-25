@@ -12,7 +12,7 @@ export interface MenuItem {
   itemBestSeller: boolean;
   itemIsVeg: boolean;
   itemIsJain: boolean;
-  itemImage?: string; // Optional image URL
+  itemImages: string[]; // Changed from itemImage?: string to itemImages: string[]
   category: string; // Category of the item (e.g., "veg", "non-veg", "drinks", "desserts")
   ingredients?: string[]; // Optional array of ingredients
 }

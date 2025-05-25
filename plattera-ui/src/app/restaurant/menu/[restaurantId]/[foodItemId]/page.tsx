@@ -4,7 +4,8 @@ import { useParams, useRouter } from "next/navigation";
 import Image from "next/image";
 import { demoMenuItems } from "@/app/restaurant/menu/demoData"; // Import your demo data
 import { MenuItem } from "@/app/restaurant/menu/types"; // Import MenuItem type
-import { ArrowLeft } from "lucide-react"; // Import the ArrowLeft icon
+import { ArrowLeft, ChevronLeft, ChevronRight } from "lucide-react"; // Import the ArrowLeft and Chevron icons
+import { useState, useRef, TouchEvent } from "react";
 
 export default function FoodItemPage() {
   const params = useParams();
@@ -12,6 +13,12 @@ export default function FoodItemPage() {
   const { restaurantId, foodItemId } = params;
 
   const router = useRouter();
+  const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  const touchStartX = useRef<number | null>(null);
+  const touchEndX = useRef<number | null>(null);
+
+  // Minimum swipe distance (in px)
+  const minSwipeDistance = 50;
 
   // Find the food item in your data based on the foodItemId
   // Note: For a multi-restaurant app, you'd filter by restaurantId first
@@ -63,29 +70,87 @@ export default function FoodItemPage() {
   // For now, let's just show the dummy values or hide the section if no real data exists.
   const displayNutrition = false; // Set to true if you add nutrition data to MenuItem type
 
+  const handlePreviousImage = () => {
+    setCurrentImageIndex((prev) =>
+      prev === 0 ? foodItem.itemImages.length - 1 : prev - 1
+    );
+  };
+
+  const handleNextImage = () => {
+    setCurrentImageIndex((prev) =>
+      prev === foodItem.itemImages.length - 1 ? 0 : prev + 1
+    );
+  };
+
+  const onTouchStart = (e: TouchEvent) => {
+    touchEndX.current = null; // Reset the end X position
+    touchStartX.current = e.targetTouches[0].clientX;
+  };
+
+  const onTouchMove = (e: TouchEvent) => {
+    touchEndX.current = e.targetTouches[0].clientX;
+  };
+
+  const onTouchEnd = () => {
+    if (!touchStartX.current || !touchEndX.current) return;
+
+    const distance = touchStartX.current - touchEndX.current;
+    const isLeftSwipe = distance > minSwipeDistance;
+    const isRightSwipe = distance < -minSwipeDistance;
+
+    if (isLeftSwipe) {
+      handleNextImage();
+    }
+    if (isRightSwipe) {
+      handlePreviousImage();
+    }
+  };
+
   return (
     <div
       className="min-h-screen pb-16"
       style={{ backgroundColor: "var(--background)" }}
     >
-      {/* Food Image */}
-      <div className="relative w-full h-80">
+      {/* Food Image Carousel */}
+      <div
+        className="relative w-full h-80"
+        onTouchStart={onTouchStart}
+        onTouchMove={onTouchMove}
+        onTouchEnd={onTouchEnd}
+      >
         <Image
-          src={foodItem.itemImage || "/DummyDishImage.jpg"} // Use itemImage from data
-          alt={foodItem.itemName}
+          src={foodItem.itemImages[currentImageIndex]}
+          alt={`${foodItem.itemName} - Image ${currentImageIndex + 1}`}
           fill
           sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-          className="object-cover"
+          className="object-cover select-none"
         />
-        {/* Rating is not in your MenuItem type, adding placeholder logic if you add it later */}
-        {/* {foodItem.rating && (
-          <div className="absolute top-4 right-4 bg-white text-yellow-500 px-3 py-1 rounded-full flex items-center text-sm font-semibold">
-            <svg className="w-4 h-4 mr-1 fill-current" viewBox="0 0 24 24">
-              <path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21L12 17.27z" />
-            </svg>
-            {foodItem.rating.toFixed(1)}
-          </div>
-        )}*/}
+
+        {/* Navigation Buttons - Only show if there are multiple images */}
+        {foodItem.itemImages.length > 1 && (
+          <>
+            {/* Hide buttons on touch devices */}
+            <button
+              onClick={handlePreviousImage}
+              className="absolute left-2 top-1/2 -translate-y-1/2 bg-black/50 text-white p-2 rounded-full hover:bg-black/70 transition-colors hidden md:block"
+              aria-label="Previous image"
+            >
+              <ChevronLeft className="w-6 h-6" />
+            </button>
+            <button
+              onClick={handleNextImage}
+              className="absolute right-2 top-1/2 -translate-y-1/2 bg-black/50 text-white p-2 rounded-full hover:bg-black/70 transition-colors hidden md:block"
+              aria-label="Next image"
+            >
+              <ChevronRight className="w-6 h-6" />
+            </button>
+
+            {/* Image Counter - Moved to right side */}
+            <div className="absolute bottom-4 right-4 bg-black/50 text-white px-3 py-1 rounded-full text-sm">
+              {currentImageIndex + 1} / {foodItem.itemImages.length}
+            </div>
+          </>
+        )}
       </div>
 
       <div className="container mx-auto px-4 mt-8">
@@ -220,7 +285,7 @@ export default function FoodItemPage() {
                 >
                   <div className="w-16 h-16 rounded-lg overflow-hidden mr-4 relative">
                     <Image
-                      src={side.itemImage || "/DummyDishImage.jpg"} // Use itemImage from data
+                      src={side.itemImages[0] || "/DummyDishImage.jpg"}
                       alt={side.itemName}
                       fill
                       sizes="64px"

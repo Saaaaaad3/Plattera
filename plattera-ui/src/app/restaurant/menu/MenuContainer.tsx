@@ -1,6 +1,6 @@
 import React from "react";
 import { MenuItem, MenuCategory } from "./types";
-import { demoMenuItems } from "./demoData";
+import { demoMenuItems } from "@/app/restaurant/menu/demoData";
 import { MenuClient } from "./MenuClient";
 
 // Helper function to group items by category
@@ -17,15 +17,20 @@ const groupItemsByCategory = (items: MenuItem[]): MenuCategory[] => {
   }));
 };
 
-// This is a Server Component
-export const MenuContainer = async () => {
-  // In the future, replace this with actual API call
-  // const response = await fetch('your-api-endpoint');
-  // const menuItems: MenuItem[] = await response.json();
-  const menuItems = demoMenuItems;
+// This is a Server Component and receives props, including params
+export const MenuContainer = async ({
+  restaurantId,
+}: {
+  restaurantId: string;
+}) => {
+  // In the future, replace this with actual API call based on restaurantId
+  // For now, filter demo data by restId (assuming restId in demoData corresponds to restaurantId)
+  const menuItems = demoMenuItems.filter(
+    (item: MenuItem) => item.restId.toString() === restaurantId
+  );
 
   // Group items by category
   const menuCategories = groupItemsByCategory(menuItems);
 
-  return <MenuClient categories={menuCategories} />;
+  return <MenuClient categories={menuCategories} restaurantId={restaurantId} />;
 };

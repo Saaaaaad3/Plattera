@@ -8,9 +8,10 @@ import { FloatingMenuButton } from "./components/FloatingMenuButton";
 
 interface MenuClientProps {
   categories: MenuCategory[];
+  restaurantId: string;
 }
 
-export const MenuClient = ({ categories }: MenuClientProps) => {
+export const MenuClient = ({ categories, restaurantId }: MenuClientProps) => {
   return (
     <div
       className="min-h-screen"
@@ -28,7 +29,11 @@ export const MenuClient = ({ categories }: MenuClientProps) => {
         </div>
         <div className="space-y-6">
           {categories.map((category) => (
-            <CategorySection key={category.id} category={category} />
+            <CategorySection
+              key={category.id}
+              category={category}
+              restaurantId={restaurantId}
+            />
           ))}
         </div>
       </div>

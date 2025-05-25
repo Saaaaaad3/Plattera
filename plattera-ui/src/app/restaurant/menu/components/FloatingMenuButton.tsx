@@ -38,8 +38,8 @@ export const FloatingMenuButton = ({ categories }: FloatingMenuButtonProps) => {
                     e.preventDefault();
                     document
                       .getElementById(category.id)
-                      ?.scrollIntoView({ behavior: "smooth" });
-                    setIsOpen(false); // Close the menu after clicking
+                      ?.scrollIntoView({ behavior: "smooth" }); // Corrected typo here
+                    setIsOpen(false);
                   }}
                   className="hover:underline cursor-pointer"
                 >

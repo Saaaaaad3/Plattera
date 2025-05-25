@@ -7,9 +7,13 @@ import { MenuItemCard } from "./MenuItemCard";
 
 interface CategorySectionProps {
   category: MenuCategory;
+  restaurantId: string;
 }
 
-export const CategorySection = ({ category }: CategorySectionProps) => {
+export const CategorySection = ({
+  category,
+  restaurantId,
+}: CategorySectionProps) => {
   const [isExpanded, setIsExpanded] = useState(true);
 
   return (
@@ -30,7 +34,11 @@ export const CategorySection = ({ category }: CategorySectionProps) => {
         <div className="px-4">
           <ul className="space-y-4">
             {category.items.map((item) => (
-              <MenuItemCard key={item.itemId} item={item} />
+              <MenuItemCard
+                key={item.itemId}
+                item={item}
+                restaurantId={restaurantId}
+              />
             ))}
           </ul>
         </div>

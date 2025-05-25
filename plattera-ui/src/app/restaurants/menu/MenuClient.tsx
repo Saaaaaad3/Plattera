@@ -4,6 +4,7 @@ import React from "react";
 import { ThemeToggleWrapper } from "@/app/components/ThemeToggleWrapper";
 import { MenuCategory } from "./types";
 import { CategorySection } from "./components/CategorySection";
+import { FloatingMenuButton } from "./components/FloatingMenuButton";
 
 interface MenuClientProps {
   categories: MenuCategory[];
@@ -31,6 +32,7 @@ export const MenuClient = ({ categories }: MenuClientProps) => {
           ))}
         </div>
       </div>
+      <FloatingMenuButton categories={categories} />
     </div>
   );
 };

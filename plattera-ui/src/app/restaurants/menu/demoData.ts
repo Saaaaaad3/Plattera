@@ -18,6 +18,7 @@ export const demoMenuItems: MenuItem[] = [
     itemIsJain: false,
     itemImage: "/DummyDishImage.jpg",
     category: "non-veg",
+    ingredients: ["Chicken", "Cream", "Tomato", "Curry Sauce"],
   },
   {
     itemId: 2,
@@ -36,6 +37,7 @@ export const demoMenuItems: MenuItem[] = [
     itemIsJain: false,
     itemImage: "/DummyDishImage.jpg",
     category: "veg",
+    ingredients: ["Paneer", "Spices", "Yogurt"],
   },
   {
     itemId: 3,
@@ -54,6 +56,7 @@ export const demoMenuItems: MenuItem[] = [
     itemIsJain: true,
     itemImage: "/DummyDishImage.jpg",
     category: "desserts",
+    ingredients: ["Milk Solids", "Sugar Syrup", "Rose Water"],
   },
   {
     itemId: 4,
@@ -72,6 +75,7 @@ export const demoMenuItems: MenuItem[] = [
     itemIsJain: false,
     itemImage: "/DummyDishImage.jpg",
     category: "veg",
+    ingredients: ["Basmati Rice", "Mixed Vegetables", "Spices"],
   },
   {
     itemId: 5,
@@ -89,6 +93,7 @@ export const demoMenuItems: MenuItem[] = [
     itemIsJain: false,
     itemImage: "/DummyDishImage.jpg",
     category: "non-veg",
+    ingredients: ["Chicken", "Cream", "Tomato", "Spices", "Curry"],
   },
   {
     itemId: 6,
@@ -106,6 +111,7 @@ export const demoMenuItems: MenuItem[] = [
     itemIsJain: true,
     itemImage: "/DummyDishImage.jpg",
     category: "drinks",
+    ingredients: ["Yogurt", "Mango Pulp", "Sugar"],
   },
   {
     itemId: 7,
@@ -123,6 +129,7 @@ export const demoMenuItems: MenuItem[] = [
     itemIsJain: false,
     itemImage: "/DummyDishImage.jpg",
     category: "drinks",
+    ingredients: ["Tea", "Milk", "Spices"],
   },
   {
     itemId: 8,
@@ -140,6 +147,7 @@ export const demoMenuItems: MenuItem[] = [
     itemIsJain: true,
     itemImage: "/DummyDishImage.jpg",
     category: "desserts",
+    ingredients: ["Cottage Cheese", "Milk", "Sugar"],
   },
   {
     itemId: 9,
@@ -157,6 +165,7 @@ export const demoMenuItems: MenuItem[] = [
     itemIsJain: false,
     itemImage: "/DummyDishImage.jpg",
     category: "appetizers",
+    ingredients: ["Pastry", "Potatoes", "Peas", "Spices"],
   },
   {
     itemId: 10,
@@ -174,6 +183,7 @@ export const demoMenuItems: MenuItem[] = [
     itemIsJain: true,
     itemImage: "/DummyDishImage.jpg",
     category: "soups",
+    ingredients: ["Tomato", "Cream"],
   },
   {
     itemId: 11,
@@ -191,6 +201,7 @@ export const demoMenuItems: MenuItem[] = [
     itemIsJain: true,
     itemImage: "/DummyDishImage.jpg",
     category: "salads",
+    ingredients: ["Mixed Greens", "Cucumber", "Tomatoes", "Carrots"],
   },
   {
     itemId: 12,
@@ -208,6 +219,7 @@ export const demoMenuItems: MenuItem[] = [
     itemIsJain: false,
     itemImage: "/DummyDishImage.jpg",
     category: "non-veg",
+    ingredients: ["Fish", "Coconut Milk", "Spices", "Curry"],
   },
   {
     itemId: 13,
@@ -225,6 +237,7 @@ export const demoMenuItems: MenuItem[] = [
     itemIsJain: false,
     itemImage: "/DummyDishImage.jpg",
     category: "non-veg",
+    ingredients: ["Lamb", "Vinegar", "Potatoes", "Spices"],
   },
   {
     itemId: 14,
@@ -242,5 +255,6 @@ export const demoMenuItems: MenuItem[] = [
     itemIsJain: false,
     itemImage: "/DummyDishImage.jpg",
     category: "veg",
+    ingredients: ["Cottage Cheese", "Spinach", "Gravy", "Spices"],
   },
 ];

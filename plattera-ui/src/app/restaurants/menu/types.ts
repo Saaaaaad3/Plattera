@@ -14,6 +14,7 @@ export interface MenuItem {
   itemIsJain: boolean;
   itemImage?: string; // Optional image URL
   category: string; // Category of the item (e.g., "veg", "non-veg", "drinks", "desserts")
+  ingredients?: string[]; // Optional array of ingredients
 }
 
 export interface MenuCategory {

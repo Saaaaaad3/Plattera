@@ -13,7 +13,7 @@ export const CategorySection = ({ category }: CategorySectionProps) => {
   const [isExpanded, setIsExpanded] = useState(true);
 
   return (
-    <div className="mb-6">
+    <div id={category.id} className="mb-6">
       <button
         onClick={() => setIsExpanded(!isExpanded)}
         className="w-full px-4 py-3 flex items-center justify-between hover:bg-opacity-5 transition-colors"

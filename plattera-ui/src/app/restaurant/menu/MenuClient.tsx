@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { ThemeToggleWrapper } from "@/app/components/ThemeToggleWrapper";
+import { BurgerMenu } from "@/app/components/BurgerMenu";
 import { MenuCategory } from "./types";
 import { CategorySection } from "./components/CategorySection";
 import { FloatingMenuButton } from "./components/FloatingMenuButton";
@@ -25,7 +25,7 @@ export const MenuClient = ({ categories, restaurantId }: MenuClientProps) => {
           >
             Menu
           </h1>
-          <ThemeToggleWrapper />
+          <BurgerMenu />
         </div>
         <div className="space-y-6">
           {categories.map((category) => (

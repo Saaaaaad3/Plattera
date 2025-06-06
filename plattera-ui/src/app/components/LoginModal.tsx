@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useAuth } from "../context/AuthContext";
 
 const API_BASE_URL = "http://localhost:3001";
 
@@ -31,6 +32,7 @@ export function LoginModal({ isOpen, onClose }: LoginModalProps) {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [isNewUser, setIsNewUser] = useState(false);
+  const { login } = useAuth();
 
   const validatePhoneNumber = (number: string): boolean => {
     // Indian format: 6-9 followed by 9 digits
@@ -136,15 +138,8 @@ export function LoginModal({ isOpen, onClose }: LoginModalProps) {
       }
 
       const data: VerifyResponse = await response.json();
-
-      // Store the JWT token securely
-      localStorage.setItem("auth_token", data.token);
-
-      // Close the modal and trigger any necessary auth state updates
+      login(data.token);
       onClose();
-
-      // TODO: Implement role-based redirect
-      // window.location.href = '/dashboard'; // or appropriate route based on role
     } catch (err) {
       console.error("Verification error:", err);
       if (err instanceof Error && err.message.includes("Failed to fetch")) {

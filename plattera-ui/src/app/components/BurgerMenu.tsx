@@ -1,18 +1,51 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { ThemeToggle } from "./ThemeToggle";
 import { useTheme } from "../context/ThemeContext";
 import { LoginModal } from "./LoginModal";
+import { useAuth } from "../context/AuthContext";
+import { useRouter, usePathname } from "next/navigation";
 
 export function BurgerMenu() {
   const [isOpen, setIsOpen] = useState(false);
   const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
   const { theme } = useTheme();
+  const { isAuthenticated, userRole, logout } = useAuth();
+  const router = useRouter();
+  const pathname = usePathname();
+
+  // Extract restaurant ID from the current path
+  const getRestaurantId = () => {
+    const match = pathname.match(/\/restaurant\/menu\/(\d+)/);
+    return match ? match[1] : null;
+  };
+
+  // Check if we're on the update page
+  const isUpdatePage = pathname.includes("/update");
 
   const handleLoginClick = () => {
-    setIsOpen(false); // Close the burger menu
-    setIsLoginModalOpen(true); // Open the login modal
+    setIsOpen(false);
+    setIsLoginModalOpen(true);
+  };
+
+  const handleMenuActionClick = () => {
+    setIsOpen(false);
+    const restaurantId = getRestaurantId();
+    if (restaurantId) {
+      if (isUpdatePage) {
+        // If on update page, go back to menu view
+        router.push(`/restaurant/menu/${restaurantId}`);
+      } else {
+        // If on menu view, go to update page
+        router.push(`/restaurant/menu/${restaurantId}/update`);
+      }
+    }
+  };
+
+  const handleLogoutClick = () => {
+    setIsOpen(false);
+    logout();
   };
 
   return (
@@ -48,14 +81,34 @@ export function BurgerMenu() {
               backgroundColor: "var(--card)",
             }}
           >
-            {/* Login Button */}
-            <button
-              className="w-full px-4 py-2 text-left hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
-              style={{ color: "var(--copy-primary)" }}
-              onClick={handleLoginClick}
-            >
-              Login
-            </button>
+            {!isAuthenticated ? (
+              <button
+                className="w-full px-4 py-2 text-left hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
+                style={{ color: "var(--copy-primary)" }}
+                onClick={handleLoginClick}
+              >
+                Login
+              </button>
+            ) : (
+              <>
+                {userRole === "RestOwner" && (
+                  <button
+                    className="w-full px-4 py-2 text-left hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
+                    style={{ color: "var(--copy-primary)" }}
+                    onClick={handleMenuActionClick}
+                  >
+                    {isUpdatePage ? "Menu View" : "Update Menu"}
+                  </button>
+                )}
+                <button
+                  className="w-full px-4 py-2 text-left hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
+                  style={{ color: "var(--copy-primary)" }}
+                  onClick={handleLogoutClick}
+                >
+                  Logout
+                </button>
+              </>
+            )}
 
             {/* Theme Toggle */}
             <div className="px-4 py-2 flex items-center justify-between">

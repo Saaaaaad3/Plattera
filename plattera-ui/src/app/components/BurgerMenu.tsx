@@ -21,8 +21,9 @@ export function BurgerMenu() {
     return match ? match[1] : null;
   };
 
-  // Check if we're on the update page
+  // Check if we're on specific pages
   const isUpdatePage = pathname.includes("/update");
+  const isFavoritesPage = pathname.includes("/favorites");
 
   const handleLoginClick = () => {
     setIsOpen(false);
@@ -33,12 +34,22 @@ export function BurgerMenu() {
     setIsOpen(false);
     const restaurantId = getRestaurantId();
     if (restaurantId) {
-      if (isUpdatePage) {
-        // If on update page, go back to menu view
-        router.push(`/restaurant/menu/${restaurantId}`);
-      } else {
-        // If on menu view, go to update page
-        router.push(`/restaurant/menu/${restaurantId}/update`);
+      if (userRole === "RestOwner") {
+        if (isUpdatePage) {
+          // If on update page, go back to menu view
+          router.push(`/restaurant/menu/${restaurantId}`);
+        } else {
+          // If on menu view, go to update page
+          router.push(`/restaurant/menu/${restaurantId}/update`);
+        }
+      } else if (userRole === "Customer") {
+        if (isFavoritesPage) {
+          // If on favorites page, go back to menu view
+          router.push(`/restaurant/menu/${restaurantId}`);
+        } else {
+          // If on menu view, go to favorites page
+          router.push(`/restaurant/menu/${restaurantId}/favorites`);
+        }
       }
     }
   };
@@ -58,20 +69,20 @@ export function BurgerMenu() {
         <button
           onClick={() => setIsOpen(!isOpen)}
           className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
-          aria-label="Menu"
+          style={{ color: "var(--copy-primary)" }}
         >
           <svg
             xmlns="http://www.w3.org/2000/svg"
+            className="h-6 w-6"
             fill="none"
             viewBox="0 0 24 24"
-            strokeWidth={1.5}
             stroke="currentColor"
-            className="w-6 h-6"
           >
             <path
               strokeLinecap="round"
               strokeLinejoin="round"
-              d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5"
+              strokeWidth={2}
+              d="M4 6h16M4 12h16M4 18h16"
             />
           </svg>
         </button>
@@ -79,9 +90,10 @@ export function BurgerMenu() {
         {/* Dropdown Menu */}
         {isOpen && (
           <div
-            className="absolute right-0 mt-2 w-48 rounded-md shadow-lg py-1 z-50"
+            className="absolute right-0 mt-2 w-48 rounded-lg shadow-lg py-1 z-50"
             style={{
               backgroundColor: "var(--card)",
+              border: "1px solid var(--card-shadow)",
             }}
           >
             {!isAuthenticated ? (
@@ -101,6 +113,15 @@ export function BurgerMenu() {
                     onClick={handleMenuActionClick}
                   >
                     {isUpdatePage ? "Menu View" : "Update Menu"}
+                  </button>
+                )}
+                {userRole === "Customer" && (
+                  <button
+                    className="w-full px-4 py-2 text-left hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
+                    style={{ color: "var(--copy-primary)" }}
+                    onClick={handleMenuActionClick}
+                  >
+                    {isFavoritesPage ? "Menu View" : "Favorites"}
                   </button>
                 )}
                 <button

@@ -4,9 +4,9 @@ export interface MenuItem {
   restId: number;
   itemPrice: string;
   itemDescription: string;
+  itemIngredients: string;
   itemSweet: boolean;
   itemSpicy: boolean;
-  itemSweetLevel: number;
   itemSpiceLevel: number;
   itemAvailable: boolean;
   itemBestSeller: boolean;
@@ -14,7 +14,8 @@ export interface MenuItem {
   itemIsJain: boolean;
   itemImages: string[];
   category: string;
-  ingredients?: string[];
+  restaurantCategoryId?: number;
+  ingredients?: string[]; // Temporary field for tag input component
 }
 
 export interface MenuCategory {
@@ -38,9 +39,9 @@ export function createMenuItem(
     restId,
     itemPrice,
     itemDescription,
+    itemIngredients: "",
     itemSweet: false,
     itemSpicy: false,
-    itemSweetLevel: 0,
     itemSpiceLevel: 0,
     itemAvailable: true,
     itemBestSeller: false,

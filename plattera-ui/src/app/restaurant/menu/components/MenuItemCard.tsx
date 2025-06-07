@@ -1,10 +1,74 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, KeyboardEvent, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { MenuItem } from "../types";
-import { Edit2, Trash2 } from "lucide-react";
+import { Edit2, Trash2, X } from "lucide-react";
+
+// Tag Input Component
+const TagInput = ({
+  tags,
+  onTagsChange,
+  placeholder,
+}: {
+  tags: string[];
+  onTagsChange: (tags: string[]) => void;
+  placeholder?: string;
+}) => {
+  const [input, setInput] = useState("");
+
+  const handleKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === "Enter" || e.key === ",") {
+      e.preventDefault();
+      const newTag = input.trim();
+      if (newTag && !tags.includes(newTag)) {
+        onTagsChange([...tags, newTag]);
+      }
+      setInput("");
+    } else if (e.key === "Backspace" && !input && tags.length > 0) {
+      onTagsChange(tags.slice(0, -1));
+    }
+  };
+
+  const removeTag = (tagToRemove: string) => {
+    onTagsChange(tags.filter((tag) => tag !== tagToRemove));
+  };
+
+  return (
+    <div
+      className="flex flex-wrap gap-2 p-2 border rounded-md min-h-[42px]"
+      style={{
+        backgroundColor: "var(--background)",
+        borderColor: "var(--card-shadow)",
+      }}
+    >
+      {tags.map((tag) => (
+        <span
+          key={tag}
+          className="inline-flex items-center gap-1 px-2 py-1 text-sm bg-blue-100 text-blue-800 rounded-full"
+        >
+          {tag}
+          <button
+            onClick={() => removeTag(tag)}
+            className="hover:text-blue-600"
+          >
+            <X className="w-3 h-3" />
+          </button>
+        </span>
+      ))}
+      <input
+        type="text"
+        value={input}
+        onChange={(e) => setInput(e.target.value)}
+        onKeyDown={handleKeyDown}
+        placeholder={tags.length === 0 ? placeholder : "Add another..."}
+        className="flex-1 min-w-[120px] bg-transparent outline-none"
+        style={{ color: "var(--copy-primary)" }}
+      />
+    </div>
+  );
+};
 
 // Optimized image component with fallback
 const MenuItemImage = ({
@@ -52,11 +116,75 @@ export const MenuItemCard = ({
 }: MenuItemCardProps) => {
   const [isEditing, setIsEditing] = useState(false);
   const [editedItem, setEditedItem] = useState<MenuItem>(item);
+  const [newIngredient, setNewIngredient] = useState("");
   const isAvailable = item.itemAvailable;
+
+  // Load existing ingredients when editing starts
+  useEffect(() => {
+    if (isEditing) {
+      // Convert demo data ingredients array to comma-separated string if needed
+      if (item.ingredients && !item.itemIngredients) {
+        setEditedItem({
+          ...editedItem,
+          itemIngredients: item.ingredients.join(", "),
+        });
+      }
+    }
+  }, [isEditing, item]);
+
+  const handleAddIngredient = () => {
+    if (newIngredient.trim()) {
+      const currentIngredients = editedItem.itemIngredients
+        ? editedItem.itemIngredients
+            .split(",")
+            .map((i) => i.trim())
+            .filter(Boolean)
+        : [];
+
+      // Check if ingredient already exists
+      if (!currentIngredients.includes(newIngredient.trim())) {
+        // Add new ingredient to the comma-separated string
+        const updatedIngredients =
+          currentIngredients.length > 0
+            ? `${editedItem.itemIngredients}, ${newIngredient.trim()}`
+            : newIngredient.trim();
+
+        setEditedItem({
+          ...editedItem,
+          itemIngredients: updatedIngredients,
+        });
+      }
+      setNewIngredient("");
+    }
+  };
+
+  const handleRemoveIngredient = (ingredientToRemove: string) => {
+    const currentIngredients = editedItem.itemIngredients
+      ? editedItem.itemIngredients
+          .split(",")
+          .map((i) => i.trim())
+          .filter(Boolean)
+      : [];
+
+    // Remove the ingredient and join back with commas
+    const updatedIngredients = currentIngredients
+      .filter((i) => i !== ingredientToRemove)
+      .join(", ");
+
+    setEditedItem({
+      ...editedItem,
+      itemIngredients: updatedIngredients,
+    });
+  };
 
   const handleSave = () => {
     if (onUpdate) {
-      onUpdate(editedItem);
+      // Ensure itemIngredients is a comma-separated string
+      const itemToSave = {
+        ...editedItem,
+        itemIngredients: editedItem.itemIngredients.trim(),
+      };
+      onUpdate(itemToSave);
     }
     setIsEditing(false);
   };
@@ -67,6 +195,14 @@ export const MenuItemCard = ({
   };
 
   if (isEditing) {
+    // Split ingredients only for display purposes
+    const ingredients = editedItem.itemIngredients
+      ? editedItem.itemIngredients
+          .split(",")
+          .map((i) => i.trim())
+          .filter(Boolean)
+      : [];
+
     return (
       <div
         className="p-4 rounded-lg shadow-md"
@@ -92,8 +228,11 @@ export const MenuItemCard = ({
                 color: "var(--copy-primary)",
                 borderColor: "var(--card-shadow)",
               }}
+              minLength={3}
+              maxLength={100}
             />
           </div>
+
           <div>
             <label
               className="block text-sm font-medium mb-1"
@@ -115,8 +254,81 @@ export const MenuItemCard = ({
                 color: "var(--copy-primary)",
                 borderColor: "var(--card-shadow)",
               }}
+              minLength={10}
+              maxLength={500}
             />
           </div>
+
+          <div>
+            <label
+              className="block text-sm font-medium mb-1"
+              style={{ color: "var(--copy-primary)" }}
+            >
+              Ingredients
+            </label>
+            <div className="space-y-2">
+              <div className="flex gap-2">
+                <input
+                  type="text"
+                  value={newIngredient}
+                  onChange={(e) => setNewIngredient(e.target.value)}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter") {
+                      e.preventDefault();
+                      handleAddIngredient();
+                    }
+                  }}
+                  className="flex-1 px-3 py-2 border rounded-md"
+                  style={{
+                    backgroundColor: "var(--background)",
+                    color: "var(--copy-primary)",
+                    borderColor: "var(--card-shadow)",
+                  }}
+                  placeholder="Add an ingredient"
+                />
+                <button
+                  onClick={handleAddIngredient}
+                  className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
+                >
+                  Add
+                </button>
+              </div>
+
+              <div
+                className="mt-2 p-3 border rounded-md"
+                style={{
+                  backgroundColor: "var(--background)",
+                  borderColor: "var(--card-shadow)",
+                }}
+              >
+                <div
+                  className="text-sm font-medium mb-2"
+                  style={{ color: "var(--copy-primary)" }}
+                >
+                  {ingredients.length > 0
+                    ? "Current Ingredients:"
+                    : "No ingredients added yet"}
+                </div>
+                <div className="flex flex-wrap gap-2">
+                  {ingredients.map((ingredient) => (
+                    <span
+                      key={ingredient}
+                      className="inline-flex items-center gap-1 px-3 py-1 bg-blue-100 text-blue-800 rounded-full"
+                    >
+                      {ingredient}
+                      <button
+                        onClick={() => handleRemoveIngredient(ingredient)}
+                        className="hover:text-blue-600"
+                      >
+                        ×
+                      </button>
+                    </span>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </div>
+
           <div>
             <label
               className="block text-sm font-medium mb-1"
@@ -125,7 +337,7 @@ export const MenuItemCard = ({
               Price
             </label>
             <input
-              type="text"
+              type="number"
               value={editedItem.itemPrice}
               onChange={(e) =>
                 setEditedItem({ ...editedItem, itemPrice: e.target.value })
@@ -136,8 +348,150 @@ export const MenuItemCard = ({
                 color: "var(--copy-primary)",
                 borderColor: "var(--card-shadow)",
               }}
+              min="0"
+              step="0.01"
             />
           </div>
+
+          <div className="grid grid-cols-2 gap-4">
+            <div className="space-y-2">
+              <label className="flex items-center gap-2">
+                <input
+                  type="checkbox"
+                  checked={editedItem.itemSweet}
+                  onChange={(e) =>
+                    setEditedItem({
+                      ...editedItem,
+                      itemSweet: e.target.checked,
+                    })
+                  }
+                  className="rounded"
+                />
+                <span style={{ color: "var(--copy-primary)" }}>Sweet</span>
+              </label>
+
+              <label className="flex items-center gap-2">
+                <input
+                  type="checkbox"
+                  checked={editedItem.itemSpicy}
+                  onChange={(e) =>
+                    setEditedItem({
+                      ...editedItem,
+                      itemSpicy: e.target.checked,
+                    })
+                  }
+                  className="rounded"
+                />
+                <span style={{ color: "var(--copy-primary)" }}>Spicy</span>
+              </label>
+
+              <label className="flex items-center gap-2">
+                <input
+                  type="checkbox"
+                  checked={editedItem.itemIsVeg}
+                  onChange={(e) =>
+                    setEditedItem({
+                      ...editedItem,
+                      itemIsVeg: e.target.checked,
+                    })
+                  }
+                  className="rounded"
+                />
+                <span style={{ color: "var(--copy-primary)" }}>Vegetarian</span>
+              </label>
+            </div>
+
+            <div className="space-y-2">
+              <label className="flex items-center gap-2">
+                <input
+                  type="checkbox"
+                  checked={editedItem.itemAvailable}
+                  onChange={(e) =>
+                    setEditedItem({
+                      ...editedItem,
+                      itemAvailable: e.target.checked,
+                    })
+                  }
+                  className="rounded"
+                />
+                <span style={{ color: "var(--copy-primary)" }}>Available</span>
+              </label>
+
+              <label className="flex items-center gap-2">
+                <input
+                  type="checkbox"
+                  checked={editedItem.itemBestSeller}
+                  onChange={(e) =>
+                    setEditedItem({
+                      ...editedItem,
+                      itemBestSeller: e.target.checked,
+                    })
+                  }
+                  className="rounded"
+                />
+                <span style={{ color: "var(--copy-primary)" }}>
+                  Best Seller
+                </span>
+              </label>
+            </div>
+          </div>
+
+          {editedItem.itemSpicy && (
+            <div>
+              <label
+                className="block text-sm font-medium mb-1"
+                style={{ color: "var(--copy-primary)" }}
+              >
+                Spice Level (0-5)
+              </label>
+              <input
+                type="number"
+                value={editedItem.itemSpiceLevel}
+                onChange={(e) =>
+                  setEditedItem({
+                    ...editedItem,
+                    itemSpiceLevel: parseInt(e.target.value) || 0,
+                  })
+                }
+                className="w-full px-3 py-2 border rounded-md"
+                style={{
+                  backgroundColor: "var(--background)",
+                  color: "var(--copy-primary)",
+                  borderColor: "var(--card-shadow)",
+                }}
+                min="0"
+                max="5"
+                step="1"
+              />
+            </div>
+          )}
+
+          <div>
+            <label
+              className="block text-sm font-medium mb-1"
+              style={{ color: "var(--copy-primary)" }}
+            >
+              Thumbnail Image URL
+            </label>
+            <input
+              type="text"
+              value={editedItem.itemImages[0] || ""}
+              onChange={(e) =>
+                setEditedItem({
+                  ...editedItem,
+                  itemImages: [e.target.value],
+                })
+              }
+              className="w-full px-3 py-2 border rounded-md"
+              style={{
+                backgroundColor: "var(--background)",
+                color: "var(--copy-primary)",
+                borderColor: "var(--card-shadow)",
+              }}
+              placeholder="Enter image URL"
+            />
+          </div>
+
           <div className="flex space-x-2">
             <button
               onClick={handleSave}

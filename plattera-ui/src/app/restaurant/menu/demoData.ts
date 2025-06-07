@@ -11,7 +11,6 @@ export const demoMenuItems: MenuItem[] = [
       "Tender chicken pieces in a rich, creamy tomato-based curry sauce with butter and aromatic spices",
     itemSweet: false,
     itemSpicy: true,
-    itemSweetLevel: 2,
     itemSpiceLevel: 3,
     itemAvailable: true,
     itemBestSeller: true,
@@ -24,6 +23,7 @@ export const demoMenuItems: MenuItem[] = [
     ],
     category: "main-course",
     ingredients: ["Chicken", "Tomato", "Cream", "Butter", "Spices"],
+    itemIngredients: "Chicken, Tomato, Cream, Butter, Spices",
   },
   {
     itemId: 102,
@@ -34,7 +34,6 @@ export const demoMenuItems: MenuItem[] = [
       "Grilled cottage cheese cubes marinated in spices and yogurt, served with mint chutney",
     itemSweet: false,
     itemSpicy: true,
-    itemSweetLevel: 1,
     itemSpiceLevel: 3,
     itemAvailable: true,
     itemBestSeller: true,
@@ -43,6 +42,7 @@ export const demoMenuItems: MenuItem[] = [
     itemImages: ["/DummyDishImage.jpg", "/DummyDishImage2.jpg"],
     category: "starters",
     ingredients: ["Paneer", "Yogurt", "Spices", "Bell Peppers", "Onion"],
+    itemIngredients: "Paneer, Yogurt, Spices, Bell Peppers, Onion",
   },
   {
     itemId: 103,
@@ -53,7 +53,6 @@ export const demoMenuItems: MenuItem[] = [
       "Fragrant basmati rice cooked with mixed vegetables and aromatic spices",
     itemSweet: false,
     itemSpicy: true,
-    itemSweetLevel: 1,
     itemSpiceLevel: 3,
     itemAvailable: true,
     itemBestSeller: false,
@@ -62,6 +61,7 @@ export const demoMenuItems: MenuItem[] = [
     itemImages: ["/DummyDishImage.jpg", "/DummyDishImage3.jpg"],
     category: "main-course",
     ingredients: ["Basmati Rice", "Mixed Vegetables", "Spices", "Saffron"],
+    itemIngredients: "Basmati Rice, Mixed Vegetables, Spices, Saffron",
   },
   {
     itemId: 104,
@@ -72,7 +72,6 @@ export const demoMenuItems: MenuItem[] = [
       "Sweet milk-solid balls soaked in rose-flavored sugar syrup",
     itemSweet: true,
     itemSpicy: false,
-    itemSweetLevel: 5,
     itemSpiceLevel: 0,
     itemAvailable: true,
     itemBestSeller: false,
@@ -81,6 +80,7 @@ export const demoMenuItems: MenuItem[] = [
     itemImages: ["/DummyDishImage.jpg"],
     category: "desserts",
     ingredients: ["Milk Solids", "Sugar", "Rose Water", "Cardamom"],
+    itemIngredients: "Milk Solids, Sugar, Rose Water, Cardamom",
   },
   {
     itemId: 105,
@@ -91,7 +91,6 @@ export const demoMenuItems: MenuItem[] = [
       "Traditional spiced Indian tea with milk and aromatic spices",
     itemSweet: true,
     itemSpicy: true,
-    itemSweetLevel: 3,
     itemSpiceLevel: 2,
     itemAvailable: true,
     itemBestSeller: true,
@@ -100,6 +99,7 @@ export const demoMenuItems: MenuItem[] = [
     itemImages: ["/DummyDishImage.jpg"],
     category: "beverages",
     ingredients: ["Tea", "Milk", "Ginger", "Cardamom", "Cinnamon"],
+    itemIngredients: "Tea, Milk, Ginger, Cardamom, Cinnamon",
   },
 
   // Cafe Menu Items (restId: 2)
@@ -112,7 +112,6 @@ export const demoMenuItems: MenuItem[] = [
       "Sourdough toast topped with smashed avocado, cherry tomatoes, and microgreens",
     itemSweet: false,
     itemSpicy: false,
-    itemSweetLevel: 0,
     itemSpiceLevel: 0,
     itemAvailable: true,
     itemBestSeller: true,
@@ -127,6 +126,8 @@ export const demoMenuItems: MenuItem[] = [
       "Microgreens",
       "Olive Oil",
     ],
+    itemIngredients:
+      "Sourdough Bread, Avocado, Cherry Tomatoes, Microgreens, Olive Oil",
   },
   {
     itemId: 202,
@@ -136,7 +137,6 @@ export const demoMenuItems: MenuItem[] = [
     itemDescription: "Espresso with steamed milk and a thick layer of foam",
     itemSweet: false,
     itemSpicy: false,
-    itemSweetLevel: 0,
     itemSpiceLevel: 0,
     itemAvailable: true,
     itemBestSeller: true,
@@ -145,6 +145,7 @@ export const demoMenuItems: MenuItem[] = [
     itemImages: ["/DummyDishImage.jpg"],
     category: "coffee",
     ingredients: ["Espresso", "Steamed Milk", "Milk Foam"],
+    itemIngredients: "Espresso, Steamed Milk, Milk Foam",
   },
   {
     itemId: 203,
@@ -154,7 +155,6 @@ export const demoMenuItems: MenuItem[] = [
     itemDescription: "Buttery, flaky croissant filled with rich chocolate",
     itemSweet: true,
     itemSpicy: false,
-    itemSweetLevel: 4,
     itemSpiceLevel: 0,
     itemAvailable: true,
     itemBestSeller: true,
@@ -163,6 +163,7 @@ export const demoMenuItems: MenuItem[] = [
     itemImages: ["/DummyDishImage.jpg"],
     category: "pastries",
     ingredients: ["Butter", "Flour", "Chocolate", "Yeast", "Sugar"],
+    itemIngredients: "Butter, Flour, Chocolate, Yeast, Sugar",
   },
   {
     itemId: 204,
@@ -173,7 +174,6 @@ export const demoMenuItems: MenuItem[] = [
       "Healthy bowl with quinoa, roasted vegetables, avocado, and tahini dressing",
     itemSweet: false,
     itemSpicy: false,
-    itemSweetLevel: 0,
     itemSpiceLevel: 1,
     itemAvailable: true,
     itemBestSeller: false,
@@ -182,6 +182,7 @@ export const demoMenuItems: MenuItem[] = [
     itemImages: ["/DummyDishImage.jpg"],
     category: "lunch",
     ingredients: ["Quinoa", "Mixed Vegetables", "Avocado", "Tahini", "Lemon"],
+    itemIngredients: "Quinoa, Mixed Vegetables, Avocado, Tahini, Lemon",
   },
   {
     itemId: 205,
@@ -192,7 +193,6 @@ export const demoMenuItems: MenuItem[] = [
       "Premium matcha green tea powder whisked with steamed milk",
     itemSweet: true,
     itemSpicy: false,
-    itemSweetLevel: 2,
     itemSpiceLevel: 0,
     itemAvailable: true,
     itemBestSeller: false,
@@ -201,5 +201,6 @@ export const demoMenuItems: MenuItem[] = [
     itemImages: ["/DummyDishImage.jpg"],
     category: "coffee",
     ingredients: ["Matcha Powder", "Steamed Milk", "Honey"],
+    itemIngredients: "Matcha Powder, Steamed Milk, Honey",
   },
 ];

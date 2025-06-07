@@ -5,6 +5,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { MenuItem } from "../types";
 import { Edit2, Trash2, X } from "lucide-react";
+import { formatPrice } from "@/utils/currency";
 
 // Tag Input Component
 const TagInput = ({
@@ -551,7 +552,7 @@ export const MenuItemCard = ({
             className="font-medium text-sm sm:text-base block"
             style={{ color: "var(--price-text)" }}
           >
-            ₹{item.itemPrice}
+            {formatPrice(item.itemPrice)}
           </span>
           {!isAvailable && (
             <span className="text-xs sm:text-sm text-red-600">

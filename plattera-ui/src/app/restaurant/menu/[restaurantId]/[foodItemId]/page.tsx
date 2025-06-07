@@ -6,6 +6,7 @@ import { demoMenuItems } from "@/app/restaurant/menu/demoData"; // Import your d
 import { MenuItem } from "@/app/restaurant/menu/types"; // Import MenuItem type
 import { ArrowLeft, ChevronLeft, ChevronRight, X } from "lucide-react"; // Import the ArrowLeft, Chevron, and X icons
 import { useState, useRef, useEffect, TouchEvent } from "react";
+import { formatPrice } from "@/utils/currency";
 
 export default function FoodItemPage() {
   const params = useParams();
@@ -312,10 +313,10 @@ export default function FoodItemPage() {
             </div>
           </div>
           <span
-            className="text-2xl font-semibold"
+            className="text-2xl font-semibold text-center"
             style={{ color: "var(--price-text)" }}
           >
-            ${foodItem.itemPrice}
+            {formatPrice(foodItem.itemPrice)}
           </span>
         </div>
 
@@ -395,14 +396,13 @@ export default function FoodItemPage() {
                   key={side.itemId}
                   className="flex items-center bg-gray-700 rounded-lg shadow-md p-4 cursor-pointer hover:shadow-lg transition-shadow"
                   style={{ backgroundColor: "var(--card)" }}
-                  // Add onClick to navigate to the side item's page
                   onClick={() =>
                     router.push(
                       `/restaurant/menu/${restaurantId}/${side.itemId}`
                     )
-                  } // Updated navigation link
+                  }
                 >
-                  <div className="w-16 h-16 rounded-lg overflow-hidden mr-4 relative">
+                  <div className="w-16 h-16 rounded-lg overflow-hidden mr-4 relative flex-shrink-0">
                     <Image
                       src={side.itemImages[0] || "/DummyDishImage.jpg"}
                       alt={side.itemName}
@@ -411,7 +411,7 @@ export default function FoodItemPage() {
                       className="object-cover"
                     />
                   </div>
-                  <div className="flex-1">
+                  <div className="flex-1 min-w-0">
                     <div className="flex flex-wrap items-center gap-1">
                       <span
                         className="font-semibold text-base"
@@ -436,12 +436,14 @@ export default function FoodItemPage() {
                     >
                       {side.itemDescription}
                     </p>
-                    <span
-                      className="text-sm font-medium mt-1 block"
-                      style={{ color: "var(--price-text)" }}
-                    >
-                      ${side.itemPrice}
-                    </span>
+                    <div className="flex justify-between items-center mt-2">
+                      <span
+                        className="text-sm font-medium"
+                        style={{ color: "var(--price-text)" }}
+                      >
+                        {formatPrice(side.itemPrice)}
+                      </span>
+                    </div>
                   </div>
                 </div>
               ))}

@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { BookOpenIcon } from "lucide-react";
 import { MenuCategory } from "../types";
 
@@ -15,6 +15,24 @@ export const FloatingMenuButton = ({ categories }: FloatingMenuButtonProps) => {
     setIsOpen(!isOpen);
   };
 
+  // Prevent background scroll when modal is open
+  useEffect(() => {
+    if (isOpen) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "";
+    }
+    return () => {
+      document.body.style.overflow = "";
+    };
+  }, [isOpen]);
+
+  // Prevent background scroll when interacting with the dropdown
+  const stopScrollPropagation = (e: React.UIEvent | React.TouchEvent) => {
+    e.stopPropagation();
+    if (e.cancelable) e.preventDefault();
+  };
+
   return (
     <div className="fixed bottom-4 right-4 z-50">
       <button
@@ -25,7 +43,11 @@ export const FloatingMenuButton = ({ categories }: FloatingMenuButtonProps) => {
       </button>
 
       {isOpen && (
-        <div className="absolute bottom-16 right-0 bg-white rounded-lg shadow-xl p-4 w-48 max-h-64 overflow-y-auto">
+        <div
+          className="absolute bottom-16 right-0 bg-white rounded-lg shadow-xl p-4 w-48 max-h-64 overflow-y-auto"
+          onWheel={stopScrollPropagation}
+          onTouchMove={stopScrollPropagation}
+        >
           <ul>
             {categories.map((category) => (
               <li
@@ -38,7 +60,7 @@ export const FloatingMenuButton = ({ categories }: FloatingMenuButtonProps) => {
                     e.preventDefault();
                     document
                       .getElementById(category.id)
-                      ?.scrollIntoView({ behavior: "smooth" }); // Corrected typo here
+                      ?.scrollIntoView({ behavior: "smooth", block: "start" });
                     setIsOpen(false);
                   }}
                   className="hover:underline cursor-pointer"

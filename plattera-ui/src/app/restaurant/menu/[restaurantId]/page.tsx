@@ -6,6 +6,7 @@ import { CategorySection } from "../components/CategorySection";
 import { MenuCategory } from "../types";
 import { BurgerMenu } from "@/app/components/BurgerMenu";
 import { useParams } from "next/navigation";
+import { FloatingMenuButton } from "../components/FloatingMenuButton";
 
 // This is a Server Component by default in the App Router
 // It receives route parameters in the `params` prop
@@ -52,6 +53,8 @@ export default function MenuPage() {
     return acc;
   }, {} as Record<string, MenuCategory>);
 
+  const categories = Object.values(menuByCategory);
+
   return (
     <div
       className="min-h-screen"
@@ -69,7 +72,7 @@ export default function MenuPage() {
         </div>
 
         <div className="space-y-8">
-          {Object.values(menuByCategory).map((category) => (
+          {categories.map((category) => (
             <CategorySection
               key={category.id}
               category={category}
@@ -79,6 +82,7 @@ export default function MenuPage() {
           ))}
         </div>
       </div>
+      <FloatingMenuButton categories={categories} />
     </div>
   );
 }

@@ -4,7 +4,6 @@ import React, { useEffect, useState } from "react";
 import { useMenu } from "../context/MenuContext";
 import { CategorySection } from "../components/CategorySection";
 import { MenuCategory } from "../types";
-import { BurgerMenu } from "@/app/components/BurgerMenu";
 import { useParams } from "next/navigation";
 import { FloatingMenuButton } from "../components/FloatingMenuButton";
 
@@ -23,7 +22,7 @@ export default function MenuPage() {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
+      <div className="flex items-center justify-center min-h-[calc(100vh-4rem)]">
         <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
       </div>
     );
@@ -31,7 +30,7 @@ export default function MenuPage() {
 
   if (error) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
+      <div className="flex items-center justify-center min-h-[calc(100vh-4rem)]">
         <div className="text-red-500">{error}</div>
       </div>
     );
@@ -56,20 +55,14 @@ export default function MenuPage() {
   const categories = Object.values(menuByCategory);
 
   return (
-    <div
-      className="min-h-screen"
-      style={{ backgroundColor: "var(--background)" }}
-    >
-      <div className="max-w-7xl mx-auto px-4 py-8">
-        <div className="flex justify-between items-center mb-8">
-          <h1
-            className="text-3xl font-bold"
-            style={{ color: "var(--copy-primary)" }}
-          >
-            Menu
-          </h1>
-          <BurgerMenu />
-        </div>
+    <div className="py-8">
+      <div className="container">
+        <h1
+          className="text-3xl font-bold mb-8"
+          style={{ color: "var(--copy-primary)" }}
+        >
+          Menu
+        </h1>
 
         <div className="space-y-8">
           {categories.map((category) => (

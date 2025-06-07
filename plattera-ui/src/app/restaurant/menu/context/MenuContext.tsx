@@ -14,6 +14,7 @@ interface MenuContextType {
     updatedItem: MenuItem
   ) => Promise<void>;
   deleteMenuItem: (restaurantId: string, itemId: number) => Promise<void>;
+  addMenuItem: (restaurantId: string, newItem: MenuItem) => Promise<void>;
 }
 
 const MenuContext = createContext<MenuContextType | undefined>(undefined);
@@ -88,6 +89,31 @@ export function MenuProvider({ children }: { children: ReactNode }) {
     }
   };
 
+  const addMenuItem = async (restaurantId: string, newItem: MenuItem) => {
+    try {
+      // Simulate API delay
+      await new Promise((resolve) => setTimeout(resolve, 300));
+
+      // Simulate API validation
+      if (!newItem.itemName || !newItem.itemPrice || !newItem.category) {
+        throw new Error("Invalid menu item data");
+      }
+
+      // Ensure the item has a unique ID
+      const maxId = Math.max(...menuItems.map((item) => item.itemId), 0);
+      const itemWithId = {
+        ...newItem,
+        itemId: maxId + 1,
+        restId: parseInt(restaurantId),
+      };
+
+      setMenuItems((prevItems) => [...prevItems, itemWithId]);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Failed to add item");
+      throw err; // Re-throw to let the component handle the error
+    }
+  };
+
   return (
     <MenuContext.Provider
       value={{
@@ -97,6 +123,7 @@ export function MenuProvider({ children }: { children: ReactNode }) {
         fetchMenuItems,
         updateMenuItem,
         deleteMenuItem,
+        addMenuItem,
       }}
     >
       {children}

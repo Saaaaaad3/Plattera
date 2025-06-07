@@ -1,7 +1,6 @@
 "use client";
 
-import React from "react";
-import { BurgerMenu } from "@/app/components/BurgerMenu";
+import { memo } from "react";
 import { MenuCategory } from "./types";
 import { CategorySection } from "./components/CategorySection";
 import { FloatingMenuButton } from "./components/FloatingMenuButton";
@@ -11,23 +10,20 @@ interface MenuClientProps {
   restaurantId: string;
 }
 
-export const MenuClient = ({ categories, restaurantId }: MenuClientProps) => {
+export const MenuClient = memo(function MenuClient({
+  categories,
+  restaurantId,
+}: MenuClientProps) {
   return (
-    <div
-      className="min-h-screen"
-      style={{ backgroundColor: "var(--background)" }}
-    >
-      <div className="container mx-auto px-4 py-8">
-        <div className="flex justify-between items-center mb-8">
-          <h1
-            className="text-3xl font-bold"
-            style={{ color: "var(--copy-primary)" }}
-          >
-            Menu
-          </h1>
-          <BurgerMenu />
-        </div>
-        <div className="space-y-6">
+    <div className="py-8">
+      <div className="container">
+        <h1
+          className="text-2xl md:text-3xl font-bold mb-8"
+          style={{ color: "var(--copy-primary)" }}
+        >
+          Menu
+        </h1>
+        <div className="space-y-8">
           {categories.map((category) => (
             <CategorySection
               key={category.id}
@@ -40,4 +36,4 @@ export const MenuClient = ({ categories, restaurantId }: MenuClientProps) => {
       <FloatingMenuButton categories={categories} />
     </div>
   );
-};
+});

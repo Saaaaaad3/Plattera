@@ -1,10 +1,48 @@
 @import "tailwindcss";
 
+/* Reset and base styles */
+html,
 body {
-  color: rgb(var(--forground-rgb));
-  padding: 1 rem;
+  height: 100%;
+  margin: 0;
+  padding: 0;
 }
 
+body {
+  color: rgb(var(--forground-rgb));
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Ensure content is always below header */
+main {
+  flex: 1;
+  width: 100%;
+  position: relative;
+}
+
+/* Container styles for consistent padding */
+.container {
+  width: 100%;
+  max-width: 1280px; /* 7xl in Tailwind */
+  margin: 0 auto;
+  padding: 0 1rem;
+}
+
+@media (min-width: 640px) {
+  .container {
+    padding: 0 1.5rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .container {
+    padding: 0 2rem;
+  }
+}
+
+/* Theme variables */
 .light {
   --background: #ffffff;
   --card: #f4f4f7;

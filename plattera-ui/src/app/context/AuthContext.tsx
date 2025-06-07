@@ -2,6 +2,7 @@
 
 import React, { createContext, useContext, useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
+import { LoginModal } from "../components/LoginModal";
 
 type UserRole = "RestOwner" | "Customer" | null;
 
@@ -10,6 +11,8 @@ interface AuthContextType {
   userRole: UserRole;
   login: (token: string) => void;
   logout: (restaurantId?: string) => void;
+  showLoginModal: () => void;
+  hideLoginModal: () => void;
 }
 
 interface DecodedToken {
@@ -56,6 +59,7 @@ function convertRole(backendRole: string): UserRole {
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [userRole, setUserRole] = useState<UserRole>(null);
+  const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
   const router = useRouter();
 
   useEffect(() => {
@@ -102,9 +106,22 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }, 0);
   };
 
+  const showLoginModal = () => setIsLoginModalOpen(true);
+  const hideLoginModal = () => setIsLoginModalOpen(false);
+
   return (
-    <AuthContext.Provider value={{ isAuthenticated, userRole, login, logout }}>
+    <AuthContext.Provider
+      value={{
+        isAuthenticated,
+        userRole,
+        login,
+        logout,
+        showLoginModal,
+        hideLoginModal,
+      }}
+    >
       {children}
+      <LoginModal isOpen={isLoginModalOpen} onClose={hideLoginModal} />
     </AuthContext.Provider>
   );
 }

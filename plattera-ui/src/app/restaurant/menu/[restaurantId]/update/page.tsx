@@ -1,19 +1,13 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import { useMenu } from "../../context/MenuContext";
-import { MenuItemCard } from "../../components/MenuItemCard";
 import { DeleteConfirmationDialog } from "../../components/DeleteConfirmationDialog";
 import { AddMenuItemModal } from "../../components/AddMenuItemModal";
+import { CategorySection } from "../../components/CategorySection";
 import { MenuItem } from "../../types";
 import { useAuth } from "@/app/context/AuthContext";
-import { LoginModal } from "@/app/components/LoginModal";
-import { CategorySection } from "../../components/CategorySection";
-import { MenuCategory } from "../../types";
-import { ArrowLeft } from "lucide-react";
-import Link from "next/link";
-import { BurgerMenu } from "@/app/components/BurgerMenu";
 
 export default function UpdateMenuPage({
   params,
@@ -21,7 +15,7 @@ export default function UpdateMenuPage({
   params: { restaurantId: string };
 }) {
   const router = useRouter();
-  const { isAuthenticated, userRole } = useAuth();
+  const { isAuthenticated, userRole, showLoginModal } = useAuth();
   const restaurantId = params.restaurantId;
   const {
     menuItems,
@@ -34,47 +28,55 @@ export default function UpdateMenuPage({
   } = useMenu();
   const [deleteItemId, setDeleteItemId] = useState<number | null>(null);
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
-  const [showLoginModal, setShowLoginModal] = useState(false);
 
-  useEffect(() => {
-    if (!isAuthenticated) {
-      setShowLoginModal(true);
-      return;
-    }
-
-    if (userRole !== "RestOwner") {
-      router.push("/");
-      return;
-    }
-
-    // Fetch menu items when component mounts
-    fetchMenuItems(restaurantId);
-  }, [isAuthenticated, userRole, router, restaurantId, fetchMenuItems]);
-
-  const handleDeleteClick = (item: MenuItem) => {
+  // Memoize handlers to prevent unnecessary re-renders
+  const handleDeleteClick = useCallback((item: MenuItem) => {
     setDeleteItemId(item.itemId);
-  };
+  }, []);
 
-  const handleDeleteConfirm = async () => {
+  const handleDeleteConfirm = useCallback(async () => {
     if (deleteItemId) {
       await deleteMenuItem(restaurantId, deleteItemId);
       setDeleteItemId(null);
     }
-  };
+  }, [deleteItemId, deleteMenuItem, restaurantId]);
 
-  const handleAddItem = async (item: MenuItem) => {
-    try {
-      await addMenuItem(restaurantId, item);
-      // Refresh menu items to show the new item
-      await fetchMenuItems(restaurantId);
-    } catch (error) {
-      console.error("Error adding menu item:", error);
+  const handleAddItem = useCallback(
+    async (newItem: Omit<MenuItem, "itemId">) => {
+      const itemWithId: MenuItem = {
+        ...newItem,
+        itemId: Date.now(), // Temporary ID, will be replaced by backend
+      };
+      await addMenuItem(restaurantId, itemWithId);
+      setIsAddModalOpen(false);
+    },
+    [addMenuItem, restaurantId]
+  );
+
+  useEffect(() => {
+    if (!isAuthenticated) {
+      showLoginModal();
+      return;
     }
-  };
+
+    if (userRole !== "RestOwner") {
+      router.replace(`/restaurant/menu/${restaurantId}`);
+      return;
+    }
+
+    fetchMenuItems(restaurantId);
+  }, [
+    isAuthenticated,
+    userRole,
+    restaurantId,
+    fetchMenuItems,
+    router,
+    showLoginModal,
+  ]);
 
   if (isLoading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
+      <div className="flex items-center justify-center min-h-[calc(100vh-4rem)]">
         <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
       </div>
     );
@@ -82,13 +84,13 @@ export default function UpdateMenuPage({
 
   if (error) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
+      <div className="flex items-center justify-center min-h-[calc(100vh-4rem)]">
         <div className="text-red-500">{error}</div>
       </div>
     );
   }
 
-  // Group menu items by category and create MenuCategory objects
+  // Group menu items by category
   const menuByCategory = menuItems.reduce((acc, item) => {
     const categoryId = item.category;
     if (!acc[categoryId]) {
@@ -102,33 +104,22 @@ export default function UpdateMenuPage({
     }
     acc[categoryId].items.push(item);
     return acc;
-  }, {} as Record<string, MenuCategory>);
-
-  // Get unique categories from menu items
-  const categories = Array.from(
-    new Set(menuItems.map((item) => item.category))
-  ).sort();
+  }, {} as Record<string, { id: string; name: string; items: MenuItem[] }>);
 
   return (
-    <div
-      className="min-h-screen"
-      style={{ backgroundColor: "var(--background)" }}
-    >
-      <div className="container mx-auto px-4 py-8">
-        <div className="flex justify-between items-center mb-8">
+    <div className="py-8">
+      <div className="container">
+        <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-8">
           <h1
-            className="text-3xl font-bold"
+            className="text-2xl md:text-3xl font-bold"
             style={{ color: "var(--copy-primary)" }}
           >
             Update Menu
           </h1>
-          <BurgerMenu />
-        </div>
 
-        <div className="mb-8">
           <button
             onClick={() => setIsAddModalOpen(true)}
-            className="px-6 py-2.5 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors flex items-center gap-2"
+            className="px-6 py-2.5 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors flex items-center gap-2 w-full md:w-auto justify-center"
           >
             <span className="text-lg">+</span>
             <span>Add New Dish</span>
@@ -143,7 +134,7 @@ export default function UpdateMenuPage({
               restaurantId={restaurantId}
               isEditable={true}
               onUpdateItem={updateMenuItem}
-              onDeleteItem={(item) => handleDeleteClick(item)}
+              onDeleteItem={handleDeleteClick}
             />
           ))}
         </div>
@@ -158,17 +149,12 @@ export default function UpdateMenuPage({
         }
       />
 
-      <LoginModal
-        isOpen={showLoginModal}
-        onClose={() => setShowLoginModal(false)}
-      />
-
       <AddMenuItemModal
         isOpen={isAddModalOpen}
         onClose={() => setIsAddModalOpen(false)}
         onAdd={handleAddItem}
         restaurantId={restaurantId}
-        existingCategories={categories}
+        existingCategories={Object.keys(menuByCategory)}
       />
     </div>
   );

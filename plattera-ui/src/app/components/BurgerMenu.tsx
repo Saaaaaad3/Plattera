@@ -3,15 +3,13 @@
 import { useState, useEffect } from "react";
 import { ThemeToggle } from "./ThemeToggle";
 import { useTheme } from "../context/ThemeContext";
-import { LoginModal } from "./LoginModal";
 import { useAuth } from "../context/AuthContext";
 import { useRouter, usePathname } from "next/navigation";
 
 export function BurgerMenu() {
   const [isOpen, setIsOpen] = useState(false);
-  const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
   const { theme } = useTheme();
-  const { isAuthenticated, userRole, logout } = useAuth();
+  const { isAuthenticated, userRole, logout, showLoginModal } = useAuth();
   const router = useRouter();
   const pathname = usePathname();
 
@@ -27,7 +25,7 @@ export function BurgerMenu() {
 
   const handleLoginClick = () => {
     setIsOpen(false);
-    setIsLoginModalOpen(true);
+    showLoginModal();
   };
 
   const handleMenuActionClick = () => {
@@ -63,91 +61,83 @@ export function BurgerMenu() {
   };
 
   return (
-    <>
-      <div className="relative">
-        {/* Burger Button */}
-        <button
-          onClick={() => setIsOpen(!isOpen)}
-          className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
-          style={{ color: "var(--copy-primary)" }}
+    <div className="relative">
+      {/* Burger Button */}
+      <button
+        onClick={() => setIsOpen(!isOpen)}
+        className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
+        style={{ color: "var(--copy-primary)" }}
+      >
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          className="h-6 w-6"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke="currentColor"
         >
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            className="h-6 w-6"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M4 6h16M4 12h16M4 18h16"
-            />
-          </svg>
-        </button>
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth={2}
+            d="M4 6h16M4 12h16M4 18h16"
+          />
+        </svg>
+      </button>
 
-        {/* Dropdown Menu */}
-        {isOpen && (
-          <div
-            className="absolute right-0 mt-2 w-48 rounded-lg shadow-lg py-1 z-50"
-            style={{
-              backgroundColor: "var(--card)",
-              border: "1px solid var(--card-shadow)",
-            }}
-          >
-            {!isAuthenticated ? (
-              <button
-                className="w-full px-4 py-2 text-left hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
-                style={{ color: "var(--copy-primary)" }}
-                onClick={handleLoginClick}
-              >
-                Login
-              </button>
-            ) : (
-              <>
-                {userRole === "RestOwner" && (
-                  <button
-                    className="w-full px-4 py-2 text-left hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
-                    style={{ color: "var(--copy-primary)" }}
-                    onClick={handleMenuActionClick}
-                  >
-                    {isUpdatePage ? "Menu View" : "Update Menu"}
-                  </button>
-                )}
-                {userRole === "Customer" && (
-                  <button
-                    className="w-full px-4 py-2 text-left hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
-                    style={{ color: "var(--copy-primary)" }}
-                    onClick={handleMenuActionClick}
-                  >
-                    {isFavoritesPage ? "Menu View" : "Favorites"}
-                  </button>
-                )}
+      {/* Dropdown Menu */}
+      {isOpen && (
+        <div
+          className="absolute right-0 mt-2 w-48 rounded-lg shadow-lg py-1 z-50"
+          style={{
+            backgroundColor: "var(--card)",
+            border: "1px solid var(--card-shadow)",
+          }}
+        >
+          {!isAuthenticated ? (
+            <button
+              className="w-full px-4 py-2 text-left hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
+              style={{ color: "var(--copy-primary)" }}
+              onClick={handleLoginClick}
+            >
+              Login
+            </button>
+          ) : (
+            <>
+              {userRole === "RestOwner" && (
                 <button
                   className="w-full px-4 py-2 text-left hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
                   style={{ color: "var(--copy-primary)" }}
-                  onClick={handleLogoutClick}
+                  onClick={handleMenuActionClick}
                 >
-                  Logout
+                  {isUpdatePage ? "Menu View" : "Update Menu"}
                 </button>
-              </>
-            )}
+              )}
+              {userRole === "Customer" && (
+                <button
+                  className="w-full px-4 py-2 text-left hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
+                  style={{ color: "var(--copy-primary)" }}
+                  onClick={handleMenuActionClick}
+                >
+                  {isFavoritesPage ? "Menu View" : "Favorites"}
+                </button>
+              )}
+              <button
+                className="w-full px-4 py-2 text-left hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
+                style={{ color: "var(--copy-primary)" }}
+                onClick={handleLogoutClick}
+              >
+                Logout
+              </button>
+            </>
+          )}
 
-            {/* Theme Toggle */}
-            <div className="px-4 py-2 flex items-center justify-between">
-              <span style={{ color: "var(--copy-primary)" }}>Toggle</span>
-              <ThemeToggle />
-            </div>
+          {/* Theme Toggle */}
+          <div className="px-4 py-2 flex items-center justify-between">
+            <span style={{ color: "var(--copy-primary)" }}>Toggle</span>
+            <ThemeToggle />
           </div>
-        )}
-      </div>
-
-      {/* Login Modal */}
-      <LoginModal
-        isOpen={isLoginModalOpen}
-        onClose={() => setIsLoginModalOpen(false)}
-      />
-    </>
+        </div>
+      )}
+    </div>
   );
 }

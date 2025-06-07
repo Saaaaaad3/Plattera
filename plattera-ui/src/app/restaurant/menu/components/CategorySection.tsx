@@ -25,7 +25,7 @@ export const CategorySection = ({
   const [isExpanded, setIsExpanded] = useState(true);
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-4" id={category.id}>
       <div className="flex items-center justify-between">
         <button
           onClick={() => setIsExpanded(!isExpanded)}

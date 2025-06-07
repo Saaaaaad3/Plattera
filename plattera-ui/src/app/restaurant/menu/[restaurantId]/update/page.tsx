@@ -1,70 +1,28 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
+import { useMenu } from "../../context/MenuContext";
+import { MenuItemCard } from "../../components/MenuItemCard";
+import { DeleteConfirmationDialog } from "../../components/DeleteConfirmationDialog";
+import { AddMenuItemModal } from "../../components/AddMenuItemModal";
+import { MenuItem } from "../../types";
 import { useAuth } from "@/app/context/AuthContext";
-import { useRouter, useParams } from "next/navigation";
+import { LoginModal } from "@/app/components/LoginModal";
 import { CategorySection } from "../../components/CategorySection";
 import { MenuCategory } from "../../types";
 import { ArrowLeft } from "lucide-react";
 import Link from "next/link";
-import { useMenu } from "../../context/MenuContext";
 import { BurgerMenu } from "@/app/components/BurgerMenu";
-import { MenuItem } from "../../types";
-import { LoginModal } from "@/app/components/LoginModal";
 
-// Confirmation Dialog Component
-const DeleteConfirmationDialog = ({
-  isOpen,
-  onClose,
-  onConfirm,
-  itemName,
+export default function UpdateMenuPage({
+  params,
 }: {
-  isOpen: boolean;
-  onClose: () => void;
-  onConfirm: () => void;
-  itemName: string;
-}) => {
-  if (!isOpen) return null;
-
-  return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-      <div className="bg-white dark:bg-gray-800 rounded-lg p-6 max-w-sm w-full mx-4">
-        <h3
-          className="text-lg font-semibold mb-4"
-          style={{ color: "var(--copy-primary)" }}
-        >
-          Confirm Deletion
-        </h3>
-        <p className="mb-6" style={{ color: "var(--copy-secondary)" }}>
-          Are you sure you want to delete "{itemName}"? This action cannot be
-          undone.
-        </p>
-        <div className="flex justify-end gap-3">
-          <button
-            onClick={onClose}
-            className="px-4 py-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
-            style={{ color: "var(--copy-primary)" }}
-          >
-            Cancel
-          </button>
-          <button
-            onClick={onConfirm}
-            className="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors"
-          >
-            Delete
-          </button>
-        </div>
-      </div>
-    </div>
-  );
-};
-
-export default function UpdateMenuPage() {
-  const params = useParams();
-  const restaurantId = params?.restaurantId as string;
-  const { isAuthenticated, userRole } = useAuth();
+  params: { restaurantId: string };
+}) {
   const router = useRouter();
-  const [showLoginModal, setShowLoginModal] = useState(false);
+  const { isAuthenticated, userRole } = useAuth();
+  const restaurantId = params.restaurantId;
   const {
     menuItems,
     isLoading,
@@ -72,23 +30,13 @@ export default function UpdateMenuPage() {
     fetchMenuItems,
     updateMenuItem,
     deleteMenuItem,
+    addMenuItem,
   } = useMenu();
-
-  // State for delete confirmation
-  const [deleteDialog, setDeleteDialog] = useState<{
-    isOpen: boolean;
-    item: MenuItem | null;
-  }>({
-    isOpen: false,
-    item: null,
-  });
+  const [deleteItemId, setDeleteItemId] = useState<number | null>(null);
+  const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+  const [showLoginModal, setShowLoginModal] = useState(false);
 
   useEffect(() => {
-    // Skip auth check if we're in the process of logging out
-    if (window.isLoggingOut) {
-      return;
-    }
-
     if (!isAuthenticated) {
       setShowLoginModal(true);
       return;
@@ -99,33 +47,28 @@ export default function UpdateMenuPage() {
       return;
     }
 
-    if (restaurantId) {
-      fetchMenuItems(restaurantId);
-    }
+    // Fetch menu items when component mounts
+    fetchMenuItems(restaurantId);
   }, [isAuthenticated, userRole, router, restaurantId, fetchMenuItems]);
 
-  // Add effect to handle logout state
-  useEffect(() => {
-    const handleBeforeUnload = () => {
-      window.isLoggingOut = true;
-    };
-
-    window.addEventListener("beforeunload", handleBeforeUnload);
-    return () => {
-      window.removeEventListener("beforeunload", handleBeforeUnload);
-      // Reset the flag when component unmounts
-      window.isLoggingOut = false;
-    };
-  }, []);
-
   const handleDeleteClick = (item: MenuItem) => {
-    setDeleteDialog({ isOpen: true, item });
+    setDeleteItemId(item.itemId);
   };
 
   const handleDeleteConfirm = async () => {
-    if (deleteDialog.item) {
-      await deleteMenuItem(restaurantId, deleteDialog.item.itemId);
-      setDeleteDialog({ isOpen: false, item: null });
+    if (deleteItemId) {
+      await deleteMenuItem(restaurantId, deleteItemId);
+      setDeleteItemId(null);
+    }
+  };
+
+  const handleAddItem = async (item: MenuItem) => {
+    try {
+      await addMenuItem(restaurantId, item);
+      // Refresh menu items to show the new item
+      await fetchMenuItems(restaurantId);
+    } catch (error) {
+      console.error("Error adding menu item:", error);
     }
   };
 
@@ -161,20 +104,35 @@ export default function UpdateMenuPage() {
     return acc;
   }, {} as Record<string, MenuCategory>);
 
+  // Get unique categories from menu items
+  const categories = Array.from(
+    new Set(menuItems.map((item) => item.category))
+  ).sort();
+
   return (
     <div
       className="min-h-screen"
       style={{ backgroundColor: "var(--background)" }}
     >
-      <div className="max-w-7xl mx-auto px-4 py-8">
-        <div className="flex items-center justify-between mb-8">
+      <div className="container mx-auto px-4 py-8">
+        <div className="flex justify-between items-center mb-8">
           <h1
-            className="text-2xl font-bold"
+            className="text-3xl font-bold"
             style={{ color: "var(--copy-primary)" }}
           >
             Update Menu
           </h1>
           <BurgerMenu />
+        </div>
+
+        <div className="mb-8">
+          <button
+            onClick={() => setIsAddModalOpen(true)}
+            className="px-6 py-2.5 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors flex items-center gap-2"
+          >
+            <span className="text-lg">+</span>
+            <span>Add New Dish</span>
+          </button>
         </div>
 
         <div className="space-y-8">
@@ -192,15 +150,25 @@ export default function UpdateMenuPage() {
       </div>
 
       <DeleteConfirmationDialog
-        isOpen={deleteDialog.isOpen}
-        onClose={() => setDeleteDialog({ isOpen: false, item: null })}
+        isOpen={deleteItemId !== null}
+        onClose={() => setDeleteItemId(null)}
         onConfirm={handleDeleteConfirm}
-        itemName={deleteDialog.item?.itemName || ""}
+        itemName={
+          menuItems.find((item) => item.itemId === deleteItemId)?.itemName || ""
+        }
       />
 
       <LoginModal
         isOpen={showLoginModal}
         onClose={() => setShowLoginModal(false)}
+      />
+
+      <AddMenuItemModal
+        isOpen={isAddModalOpen}
+        onClose={() => setIsAddModalOpen(false)}
+        onAdd={handleAddItem}
+        restaurantId={restaurantId}
+        existingCategories={categories}
       />
     </div>
   );

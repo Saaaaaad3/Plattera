@@ -45,7 +45,10 @@ export function BurgerMenu() {
 
   const handleLogoutClick = () => {
     setIsOpen(false);
-    logout();
+    const restaurantId = getRestaurantId();
+    // Set a global flag to indicate we're logging out
+    window.isLoggingOut = true;
+    logout(restaurantId || undefined);
   };
 
   return (

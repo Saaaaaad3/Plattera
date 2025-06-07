@@ -9,7 +9,7 @@ interface AuthContextType {
   isAuthenticated: boolean;
   userRole: UserRole;
   login: (token: string) => void;
-  logout: () => void;
+  logout: (restaurantId?: string) => void;
 }
 
 interface DecodedToken {
@@ -87,11 +87,19 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
-  const logout = () => {
-    localStorage.removeItem("auth_token");
-    setIsAuthenticated(false);
-    setUserRole(null);
-    router.push("/"); // Redirect to home page after logout
+  const logout = (restaurantId?: string) => {
+    if (restaurantId) {
+      // Use replace to prevent the authentication check from intercepting
+      router.replace(`/restaurant/menu/${restaurantId}`);
+    } else {
+      router.replace("/");
+    }
+    // Clear auth state after navigation
+    setTimeout(() => {
+      localStorage.removeItem("auth_token");
+      setIsAuthenticated(false);
+      setUserRole(null);
+    }, 0);
   };
 
   return (

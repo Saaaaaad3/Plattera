@@ -1,23 +1,24 @@
 "use client";
 
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useMenu } from "../context/MenuContext";
 import { CategorySection } from "../components/CategorySection";
 import { MenuCategory } from "../types";
 import { BurgerMenu } from "@/app/components/BurgerMenu";
+import { useParams } from "next/navigation";
 
 // This is a Server Component by default in the App Router
 // It receives route parameters in the `params` prop
-export default function MenuPage({
-  params,
-}: {
-  params: { restaurantId: string };
-}) {
+export default function MenuPage() {
+  const params = useParams();
+  const restaurantId = params?.restaurantId as string;
   const { menuItems, isLoading, error, fetchMenuItems } = useMenu();
 
   useEffect(() => {
-    fetchMenuItems(params.restaurantId);
-  }, [fetchMenuItems, params.restaurantId]);
+    if (restaurantId) {
+      fetchMenuItems(restaurantId);
+    }
+  }, [fetchMenuItems, restaurantId]);
 
   if (isLoading) {
     return (
@@ -72,7 +73,7 @@ export default function MenuPage({
             <CategorySection
               key={category.id}
               category={category}
-              restaurantId={params.restaurantId}
+              restaurantId={restaurantId}
               isEditable={false}
             />
           ))}

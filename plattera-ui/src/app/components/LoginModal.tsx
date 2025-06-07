@@ -3,15 +3,7 @@
 import { useState } from "react";
 import { useAuth } from "../context/AuthContext";
 import { useRouter } from "next/navigation";
-
-const API_BASE_URL = "http://localhost:3001";
-
-// Common headers for all API requests
-const API_HEADERS = {
-  "Content-Type": "application/json",
-  Accept: "application/json",
-  Origin: "http://localhost:3000",
-};
+import { apiFetch } from "../utils/apiClient";
 
 interface LoginModalProps {
   isOpen: boolean;
@@ -55,31 +47,12 @@ export function LoginModal({ isOpen, onClose }: LoginModalProps) {
 
     setIsLoading(true);
     try {
-      const response = await fetch(`${API_BASE_URL}/auth/login`, {
+      const data: LoginResponse = await apiFetch("/auth/login", {
         method: "POST",
-        headers: API_HEADERS,
-        mode: "cors",
-        credentials: "omit",
         body: JSON.stringify({
           mobileNumber: phoneNumber,
         }),
       });
-
-      if (!response.ok) {
-        const errorText = await response.text();
-        console.error("Login API Error:", {
-          status: response.status,
-          statusText: response.statusText,
-          body: errorText,
-        });
-
-        if (response.status === 429) {
-          throw new Error("Too many attempts. Please try again later.");
-        }
-        throw new Error("Failed to send OTP. Please try again.");
-      }
-
-      const data: LoginResponse = await response.json();
       setIsNewUser(data.isNewUser);
       setShowOtpInput(true);
     } catch (err) {
@@ -111,35 +84,13 @@ export function LoginModal({ isOpen, onClose }: LoginModalProps) {
 
     setIsLoading(true);
     try {
-      const response = await fetch(`${API_BASE_URL}/auth/verify`, {
+      const data: VerifyResponse = await apiFetch("/auth/verify", {
         method: "POST",
-        headers: API_HEADERS,
-        mode: "cors",
-        credentials: "omit",
         body: JSON.stringify({
           mobileNumber: phoneNumber,
           otp: otp,
         }),
       });
-
-      if (!response.ok) {
-        const errorText = await response.text();
-        console.error("Verify API Error:", {
-          status: response.status,
-          statusText: response.statusText,
-          body: errorText,
-        });
-
-        if (response.status === 401) {
-          throw new Error("Invalid OTP. Please try again.");
-        }
-        if (response.status === 429) {
-          throw new Error("Too many attempts. Please try again later.");
-        }
-        throw new Error("Verification failed. Please try again.");
-      }
-
-      const data: VerifyResponse = await response.json();
       login(data.token);
 
       // Check if we have a stored restaurantId

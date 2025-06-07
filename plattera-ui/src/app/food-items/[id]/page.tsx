@@ -5,6 +5,7 @@ import Image from "next/image";
 import { demoMenuItems } from "@/app/restaurants/menu/demoData"; // Import your demo data
 import { MenuItem } from "@/app/restaurants/menu/types"; // Import MenuItem type
 import { ArrowLeft } from "lucide-react"; // Import the ArrowLeft icon
+import { formatPrice } from "@/utils/currency";
 
 export default function FoodItemPage() {
   const params = useParams();
@@ -125,10 +126,10 @@ export default function FoodItemPage() {
             </div>
           </div>
           <span
-            className="text-2xl font-semibold"
+            className="text-2xl font-semibold text-center"
             style={{ color: "var(--price-text)" }}
           >
-            ${foodItem.itemPrice}
+            {formatPrice(foodItem.itemPrice)}
           </span>
         </div>
 
@@ -208,40 +209,45 @@ export default function FoodItemPage() {
                   key={side.itemId}
                   className="flex items-center bg-gray-700 rounded-lg shadow-md p-4 cursor-pointer hover:shadow-lg transition-shadow"
                   style={{ backgroundColor: "var(--card)" }}
-                  // Add onClick to navigate to the side item's page
                   onClick={() => router.push(`/food-items/${side.itemId}`)}
                 >
-                  <div className="w-16 h-16 rounded-lg overflow-hidden mr-4 relative">
+                  <div className="w-16 h-16 rounded-lg overflow-hidden mr-4 relative flex-shrink-0">
                     <Image
-                      src={side.itemImage || "/DummyDishImage.jpg"} // Use itemImage from data
+                      src={side.itemImage || "/DummyDishImage.jpg"}
                       alt={side.itemName}
                       fill
                       sizes="64px"
                       className="object-cover"
                     />
                   </div>
-                  <div className="flex-1">
-                    <h3
-                      className="font-semibold"
-                      style={{ color: "var(--copy-primary)" }}
+                  <div className="flex-1 min-w-0">
+                    <div className="flex flex-wrap items-center gap-1">
+                      <span
+                        className="font-semibold text-base"
+                        style={{ color: "var(--copy-primary)" }}
+                      >
+                        {side.itemName}
+                      </span>
+                      {side.itemBestSeller && (
+                        <span className="px-1.5 py-0.5 text-[10px] font-medium bg-yellow-100 text-yellow-800 rounded-full whitespace-nowrap">
+                          Best Seller
+                        </span>
+                      )}
+                    </div>
+                    <p
+                      className="text-sm line-clamp-2 mt-1"
+                      style={{ color: "var(--copy-secondary)" }}
                     >
-                      {side.itemName}
-                    </h3>{" "}
-                    {/* Use itemName */}
-                    {/* Rating is not in your MenuItem type */}
-                    {/* <div className="flex items-center text-sm" style={{ color: "var(--copy-secondary)" }}>
-                      <svg className="w-4 h-4 mr-1 fill-current text-yellow-500" viewBox="0 0 24 24">
-                        <path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21L12 17.27z" />
-                      </svg>
-                      <span>{side.rating.toFixed(1)}</span>
-                    </div> */}
-                    <span
-                      className="font-medium"
-                      style={{ color: "var(--price-text)" }}
-                    >
-                      ${side.itemPrice}
-                    </span>{" "}
-                    {/* Use itemPrice */}
+                      {side.itemDescription}
+                    </p>
+                    <div className="flex justify-between items-center mt-2">
+                      <span
+                        className="text-sm font-medium"
+                        style={{ color: "var(--price-text)" }}
+                      >
+                        {formatPrice(side.itemPrice)}
+                      </span>
+                    </div>
                   </div>
                 </div>
               ))}

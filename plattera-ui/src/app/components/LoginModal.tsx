@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useAuth } from "../context/AuthContext";
+import { useRouter } from "next/navigation";
 
 const API_BASE_URL = "http://localhost:3001";
 
@@ -33,6 +34,7 @@ export function LoginModal({ isOpen, onClose }: LoginModalProps) {
   const [error, setError] = useState<string | null>(null);
   const [isNewUser, setIsNewUser] = useState(false);
   const { login } = useAuth();
+  const router = useRouter();
 
   const validatePhoneNumber = (number: string): boolean => {
     // Indian format: 6-9 followed by 9 digits
@@ -139,6 +141,14 @@ export function LoginModal({ isOpen, onClose }: LoginModalProps) {
 
       const data: VerifyResponse = await response.json();
       login(data.token);
+
+      // Check if we have a stored restaurantId
+      const lastRestaurantId = sessionStorage.getItem("lastRestaurantId");
+      if (lastRestaurantId) {
+        sessionStorage.removeItem("lastRestaurantId"); // Clean up
+        router.push(`/restaurant/menu/${lastRestaurantId}`);
+      }
+
       onClose();
     } catch (err) {
       console.error("Verification error:", err);

@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from "react";
 import { useAuth } from "@/app/context/AuthContext";
-import { useRouter } from "next/navigation";
+import { useRouter, useParams } from "next/navigation";
 import { CategorySection } from "../../components/CategorySection";
 import { MenuCategory } from "../../types";
 import { ArrowLeft } from "lucide-react";
@@ -10,6 +10,7 @@ import Link from "next/link";
 import { useMenu } from "../../context/MenuContext";
 import { BurgerMenu } from "@/app/components/BurgerMenu";
 import { MenuItem } from "../../types";
+import { LoginModal } from "@/app/components/LoginModal";
 
 // Confirmation Dialog Component
 const DeleteConfirmationDialog = ({
@@ -58,13 +59,12 @@ const DeleteConfirmationDialog = ({
   );
 };
 
-export default function UpdateMenuPage({
-  params,
-}: {
-  params: { restaurantId: string };
-}) {
+export default function UpdateMenuPage() {
+  const params = useParams();
+  const restaurantId = params?.restaurantId as string;
   const { isAuthenticated, userRole } = useAuth();
   const router = useRouter();
+  const [showLoginModal, setShowLoginModal] = useState(false);
   const {
     menuItems,
     isLoading,
@@ -84,8 +84,13 @@ export default function UpdateMenuPage({
   });
 
   useEffect(() => {
+    // Skip auth check if we're in the process of logging out
+    if (window.isLoggingOut) {
+      return;
+    }
+
     if (!isAuthenticated) {
-      router.push("/login");
+      setShowLoginModal(true);
       return;
     }
 
@@ -94,8 +99,24 @@ export default function UpdateMenuPage({
       return;
     }
 
-    fetchMenuItems(params.restaurantId);
-  }, [isAuthenticated, userRole, router, params.restaurantId, fetchMenuItems]);
+    if (restaurantId) {
+      fetchMenuItems(restaurantId);
+    }
+  }, [isAuthenticated, userRole, router, restaurantId, fetchMenuItems]);
+
+  // Add effect to handle logout state
+  useEffect(() => {
+    const handleBeforeUnload = () => {
+      window.isLoggingOut = true;
+    };
+
+    window.addEventListener("beforeunload", handleBeforeUnload);
+    return () => {
+      window.removeEventListener("beforeunload", handleBeforeUnload);
+      // Reset the flag when component unmounts
+      window.isLoggingOut = false;
+    };
+  }, []);
 
   const handleDeleteClick = (item: MenuItem) => {
     setDeleteDialog({ isOpen: true, item });
@@ -103,7 +124,7 @@ export default function UpdateMenuPage({
 
   const handleDeleteConfirm = async () => {
     if (deleteDialog.item) {
-      await deleteMenuItem(params.restaurantId, deleteDialog.item.itemId);
+      await deleteMenuItem(restaurantId, deleteDialog.item.itemId);
       setDeleteDialog({ isOpen: false, item: null });
     }
   };
@@ -161,7 +182,7 @@ export default function UpdateMenuPage({
             <CategorySection
               key={category.id}
               category={category}
-              restaurantId={params.restaurantId}
+              restaurantId={restaurantId}
               isEditable={true}
               onUpdateItem={updateMenuItem}
               onDeleteItem={(item) => handleDeleteClick(item)}
@@ -175,6 +196,11 @@ export default function UpdateMenuPage({
         onClose={() => setDeleteDialog({ isOpen: false, item: null })}
         onConfirm={handleDeleteConfirm}
         itemName={deleteDialog.item?.itemName || ""}
+      />
+
+      <LoginModal
+        isOpen={showLoginModal}
+        onClose={() => setShowLoginModal(false)}
       />
     </div>
   );

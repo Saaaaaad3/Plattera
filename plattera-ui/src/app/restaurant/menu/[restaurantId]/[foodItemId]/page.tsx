@@ -5,7 +5,7 @@ import Image from "next/image";
 import { demoMenuItems } from "@/app/restaurant/menu/demoData"; // Import your demo data
 import { MenuItem } from "@/app/restaurant/menu/types"; // Import MenuItem type
 import { ArrowLeft, ChevronLeft, ChevronRight, X } from "lucide-react"; // Import the ArrowLeft, Chevron, and X icons
-import { useState, useRef, useEffect, TouchEvent } from "react";
+import { useState, useRef, useEffect, TouchEvent, useMemo } from "react";
 import { formatPrice } from "@/utils/currency";
 
 export default function FoodItemPage() {
@@ -59,14 +59,17 @@ export default function FoodItemPage() {
   }
 
   // --- Generate Random Recommended Sides ---
-  // Filter out the current item and unavailable items
-  const availableItems = demoMenuItems.filter(
-    (item) => item.itemId !== foodItem.itemId && item.itemAvailable
-  );
+  // Use useMemo to prevent re-generation on every render
+  const recommendedSides = useMemo(() => {
+    // Filter out the current item and unavailable items
+    const availableItems = demoMenuItems.filter(
+      (item) => item.itemId !== foodItem.itemId && item.itemAvailable
+    );
 
-  // Shuffle the available items and take the first few (e.g., 3)
-  const shuffledItems = availableItems.sort(() => 0.5 - Math.random());
-  const recommendedSides = shuffledItems.slice(0, 3);
+    // Shuffle the available items and take the first few (e.g., 3)
+    const shuffledItems = availableItems.sort(() => 0.5 - Math.random());
+    return shuffledItems.slice(0, 3);
+  }, [foodItem.itemId]); // Only regenerate when the food item changes
   // ----------------------------------------
 
   // Now using the ingredients array from the foodItem data

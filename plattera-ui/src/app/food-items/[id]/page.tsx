@@ -2,10 +2,11 @@
 
 import { useParams, useRouter } from "next/navigation";
 import Image from "next/image";
-import { demoMenuItems } from "@/app/restaurants/menu/demoData"; // Import your demo data
-import { MenuItem } from "@/app/restaurants/menu/types"; // Import MenuItem type
+import { demoMenuItems } from "@/app/restaurant/menu/demoData"; // Import your demo data
+import { MenuItem } from "@/app/restaurant/menu/types"; // Import MenuItem type
 import { ArrowLeft } from "lucide-react"; // Import the ArrowLeft icon
 import { formatPrice } from "@/utils/currency";
+import { useMemo } from "react";
 
 export default function FoodItemPage() {
   const params = useParams();
@@ -35,14 +36,17 @@ export default function FoodItemPage() {
   }
 
   // --- Generate Random Recommended Sides ---
-  // Filter out the current item and unavailable items
-  const availableItems = demoMenuItems.filter(
-    (item) => item.itemId !== foodItem.itemId && item.itemAvailable
-  );
+  // Use useMemo to prevent re-generation on every render
+  const recommendedSides = useMemo(() => {
+    // Filter out the current item and unavailable items
+    const availableItems = demoMenuItems.filter(
+      (item) => item.itemId !== foodItem.itemId && item.itemAvailable
+    );
 
-  // Shuffle the available items and take the first few (e.g., 3)
-  const shuffledItems = availableItems.sort(() => 0.5 - Math.random());
-  const recommendedSides = shuffledItems.slice(0, 3);
+    // Shuffle the available items and take the first few (e.g., 3)
+    const shuffledItems = availableItems.sort(() => 0.5 - Math.random());
+    return shuffledItems.slice(0, 3);
+  }, [foodItem.itemId]); // Only regenerate when the food item changes
   // ----------------------------------------
 
   // Now using the ingredients array from the foodItem data
@@ -69,7 +73,7 @@ export default function FoodItemPage() {
       {/* Food Image */}
       <div className="relative w-full h-80">
         <Image
-          src={foodItem.itemImage || "/DummyDishImage.jpg"} // Use itemImage from data
+          src={foodItem.itemImages[0] || "/DummyDishImage.jpg"} // Use first image from itemImages array
           alt={foodItem.itemName}
           fill
           sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
@@ -213,7 +217,7 @@ export default function FoodItemPage() {
                 >
                   <div className="w-16 h-16 rounded-lg overflow-hidden mr-4 relative flex-shrink-0">
                     <Image
-                      src={side.itemImage || "/DummyDishImage.jpg"}
+                      src={side.itemImages[0] || "/DummyDishImage.jpg"}
                       alt={side.itemName}
                       fill
                       sizes="64px"

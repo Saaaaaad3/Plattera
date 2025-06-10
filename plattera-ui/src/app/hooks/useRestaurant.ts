@@ -5,10 +5,17 @@ import { useParams } from "next/navigation";
 import { apiFetch } from "../utils/apiClient";
 
 interface Restaurant {
-  id: string;
+  restId: number;
+  userId: number;
   name: string;
-  description?: string;
-  logoUrl?: string;
+  description: string | null;
+  address: string;
+  createdAt: string;
+  updatedAt: string;
+  user: {
+    userName: string;
+  };
+  categories: any[];
 }
 
 export function useRestaurant() {
@@ -18,7 +25,10 @@ export function useRestaurant() {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    const restaurantId = params?.restaurantId as string;
+    // Ensure we're in a client context and params is available
+    if (typeof window === "undefined") return;
+
+    const restaurantId = params?.restaurantId as string | undefined;
 
     if (!restaurantId) {
       setRestaurant(null);
@@ -30,7 +40,9 @@ export function useRestaurant() {
       try {
         setIsLoading(true);
         setError(null);
-        const data = await apiFetch(`/restaurants/${restaurantId}`);
+        const data = await apiFetch(
+          `/restaurant/GetRestInfoByRestId/${restaurantId}`
+        );
         setRestaurant(data);
       } catch (err) {
         console.error("Error fetching restaurant:", err);

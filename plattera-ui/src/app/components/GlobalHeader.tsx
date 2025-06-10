@@ -50,7 +50,7 @@ export function GlobalHeader() {
             <div className="h-6 w-32 bg-gray-200 dark:bg-gray-700 animate-pulse rounded" />
           ) : (
             <h1
-              className="text-xl md:text-2xl font-bold"
+              className="text-2xl md:text-3xl lg:text-4xl font-bold tracking-tight"
               style={{ color: "var(--copy-primary)" }}
             >
               {restaurant?.name || "Plattera"}

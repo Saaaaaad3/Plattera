@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState, useCallback } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, useParams } from "next/navigation";
 import { useMenu } from "../../context/MenuContext";
 import { DeleteConfirmationDialog } from "../../components/DeleteConfirmationDialog";
 import { AddMenuItemModal } from "../../components/AddMenuItemModal";
@@ -9,14 +9,11 @@ import { CategorySection } from "../../components/CategorySection";
 import { MenuItem } from "../../types";
 import { useAuth } from "@/app/context/AuthContext";
 
-export default function UpdateMenuPage({
-  params,
-}: {
-  params: { restaurantId: string };
-}) {
+export default function UpdateMenuPage() {
   const router = useRouter();
+  const params = useParams();
   const { isAuthenticated, userRole, showLoginModal } = useAuth();
-  const restaurantId = params.restaurantId;
+  const restaurantId = params?.restaurantId as string;
   const {
     menuItems,
     isLoading,

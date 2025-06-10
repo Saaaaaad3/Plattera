@@ -15,6 +15,9 @@ export default function MenuPage() {
   const { menuItems, isLoading, error, fetchMenuItems } = useMenu();
 
   useEffect(() => {
+    // Ensure we're in a client context and params is available
+    if (typeof window === "undefined") return;
+
     if (restaurantId) {
       fetchMenuItems(restaurantId);
     }

@@ -3,25 +3,31 @@
 import React, { useEffect, useState } from "react";
 import { useMenu } from "../context/MenuContext";
 import { CategorySection } from "../components/CategorySection";
-import { MenuCategory } from "../types";
 import { useParams } from "next/navigation";
 import { FloatingMenuButton } from "../components/FloatingMenuButton";
+import { demoMenuItems } from "../demoData";
 
 // This is a Server Component by default in the App Router
 // It receives route parameters in the `params` prop
 export default function MenuPage() {
   const params = useParams();
   const restaurantId = params?.restaurantId as string;
-  const { menuItems, isLoading, error, fetchMenuItems } = useMenu();
+  const { isLoading, error, fetchCategoryItems } = useMenu();
+  const [categories, setCategories] = useState<string[]>([]);
 
   useEffect(() => {
     // Ensure we're in a client context and params is available
-    if (typeof window === "undefined") return;
+    if (typeof window === "undefined" || !restaurantId) return;
 
-    if (restaurantId) {
-      fetchMenuItems(restaurantId);
-    }
-  }, [fetchMenuItems, restaurantId]);
+    // Get unique categories for this restaurant
+    const restaurantItems = demoMenuItems.filter(
+      (item) => item.restId.toString() === restaurantId
+    );
+    const uniqueCategories = Array.from(
+      new Set(restaurantItems.map((item) => item.category))
+    );
+    setCategories(uniqueCategories);
+  }, [restaurantId]);
 
   if (isLoading) {
     return (
@@ -39,23 +45,14 @@ export default function MenuPage() {
     );
   }
 
-  // Group menu items by category and create MenuCategory objects
-  const menuByCategory = menuItems.reduce((acc, item) => {
-    const categoryId = item.category;
-    if (!acc[categoryId]) {
-      acc[categoryId] = {
-        id: categoryId,
-        name:
-          categoryId.charAt(0).toUpperCase() +
-          categoryId.slice(1).replace("-", " "),
-        items: [],
-      };
-    }
-    acc[categoryId].items.push(item);
-    return acc;
-  }, {} as Record<string, MenuCategory>);
-
-  const categories = Object.values(menuByCategory);
+  // Create category objects for the floating menu
+  const categoryObjects = categories.map((categoryId) => ({
+    id: categoryId,
+    name:
+      categoryId.charAt(0).toUpperCase() +
+      categoryId.slice(1).replace("-", " "),
+    items: [], // We don't need the actual items for the floating menu
+  }));
 
   return (
     <div className="py-8">
@@ -68,17 +65,25 @@ export default function MenuPage() {
         </h1>
 
         <div className="space-y-8">
-          {categories.map((category) => (
+          {categories.map((categoryId) => (
             <CategorySection
-              key={category.id}
-              category={category}
+              key={categoryId}
+              category={{
+                id: categoryId,
+                name:
+                  categoryId.charAt(0).toUpperCase() +
+                  categoryId.slice(1).replace("-", " "),
+                items: [], // Items will be loaded by the CategorySection component
+              }}
               restaurantId={restaurantId}
               isEditable={false}
+              initialLoadLimit={10}
+              loadMoreLimit={10}
             />
           ))}
         </div>
       </div>
-      <FloatingMenuButton categories={categories} />
+      <FloatingMenuButton categories={categoryObjects} />
     </div>
   );
 }

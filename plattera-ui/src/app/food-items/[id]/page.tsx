@@ -3,7 +3,6 @@
 import { useParams, useRouter } from "next/navigation";
 import Image from "next/image";
 import { demoMenuItems } from "@/app/restaurant/menu/demoData"; // Import your demo data
-import { MenuItem } from "@/app/restaurant/menu/types"; // Import MenuItem type
 import { ArrowLeft } from "lucide-react"; // Import the ArrowLeft icon
 import { formatPrice } from "@/utils/currency";
 import { useMemo } from "react";
